@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.rsdesign.wallpaper.view.fragment.HomeFragment"
+        android:label=""
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_category"
+        android:name="com.rsdesign.wallpaper.view.fragment.CategoryFragment"
+        android:label=""
+        tools:layout="@layout/fragment_category" />
+
+    <fragment
+        android:id="@+id/navigation_trending"
+        android:name="com.rsdesign.wallpaper.view.fragment.TrendingFragment"
+        android:label=""
+        tools:layout="@layout/fragment_trending" />
+
+    <fragment
+        android:id="@+id/navigation_download"
+        android:name="com.rsdesign.wallpaper.view.fragment.DownloadFragment"
+        android:label=""
+        tools:layout="@layout/fragment_download" />
+
+    <fragment
+        android:id="@+id/navigation_CategoryPhoto"
+        android:name="com.rsdesign.wallpaper.view.fragment.CategoryPhotoFragment"
+        android:label=""
+        tools:layout="@layout/fragment_category_photo" />
+
+    <fragment
+        android:id="@+id/navigation_view_photo"
+        android:name="com.rsdesign.wallpaper.view.fragment.PhotoViewFragment"
+        android:label=""
+        tools:layout="@layout/fragment_photo_view" />
+
+
+
+</navigation>
