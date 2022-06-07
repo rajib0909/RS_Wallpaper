@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_profile"
+            android:title="@string/profile" />
+
+        <item
+            android:id="@+id/navigation_reward"
+            android:title="@string/reward" />
+
+        <item
+            android:id="@+id/navigation_gifs"
+            android:title="@string/gifs" />
+
+        <item
+            android:id="@+id/navigation_live_wallpaper"
+            android:title="@string/live_wallpaper" />
+
+        <item
+            android:id="@+id/navigation_settings"
+            android:title="@string/settings" />
+
+    </group>
+
+    <item android:title="@string/app_info">
+        <menu>
+            <item
+                android:id="@+id/navigation_about_us"
+                android:title="@string/about_us" />
+            <item
+                android:id="@+id/navigation_rate_us"
+                android:title="@string/rate_us" />
+            <item
+                android:id="@+id/navigation_privacy_policy"
+                android:title="@string/privacy_policy" />
+
+            <item
+                android:id="@+id/navigation_contact_us"
+                android:title="@string/contact_us" />
+
+        </menu>
+    </item>
+
+</menu>

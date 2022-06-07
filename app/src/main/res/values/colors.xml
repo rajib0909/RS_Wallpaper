@@ -2,9 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="colorPrimary">#D8D8D8</color>
-    <color name="colorPrimaryVariant">#C4C4C4</color>
-    <color name="theme_color">#2C2C2C</color>
+    <color name="white_light">#E4E4E4</color>
+    <color name="white_transparent">#CCE4E4E4</color>
+    <color name="colorPrimary">#353434</color>
+    <color name="colorPrimaryVariant">#1D1D1D</color>
+    <color name="theme_color">#1D1D1D</color>
     <color name="background_color">#FCFCFC</color>
+    <color name="splash_background_color">#E5E5E5</color>
     <color name="purple">#FF4668</color>
 </resources>

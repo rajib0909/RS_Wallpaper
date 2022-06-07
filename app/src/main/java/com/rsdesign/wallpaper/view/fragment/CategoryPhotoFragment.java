@@ -2,6 +2,7 @@ package com.rsdesign.wallpaper.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -33,6 +34,7 @@ public class CategoryPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         categoryPhotoBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_photo, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         categoryPhotoBinding.btnBack.setOnClickListener(l-> getActivity().onBackPressed());
 
 

@@ -1,6 +1,7 @@
 package com.rsdesign.wallpaper.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -24,13 +25,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        // try block to hide Action bar
-        try {
-            this.getSupportActionBar().hide();
-        }
-        // catch block to handle NullPointerException
-        catch (NullPointerException e) {
-        }
+        setSupportActionBar(mainBinding.toolbar);
+
+        mainBinding.sideNav.setOnClickListener(l->{
+            mainBinding.drawerLayout.openDrawer(GravityCompat.START);
+        });
 
 
         navigationView = mainBinding.navView;

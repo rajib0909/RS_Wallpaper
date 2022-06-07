@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -26,8 +27,10 @@ public class PhotoViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         // Inflate the layout for this fragment
         photoViewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photo_view, container, false);
+
         photoViewBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
         // creating the instance of the WallpaperManager
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
