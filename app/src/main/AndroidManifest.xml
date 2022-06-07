@@ -3,18 +3,22 @@
     package="com.rsdesign.wallpaper">
     <!-- access permission to set the wallpaper -->
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.RSWallpaper">
         <activity
+            android:name=".view.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.OnboardingActivity"
             android:exported="false"
-            android:theme="@style/Theme.RSWallpaper.whiteStatusBar"/>
+            android:theme="@style/Theme.RSWallpaper.whiteStatusBar" />
         <activity
             android:name=".view.SplashActivity"
             android:exported="true"
@@ -25,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.MainActivity"></activity>
+        <activity android:name=".view.MainActivity" />
     </application>
 
 </manifest>

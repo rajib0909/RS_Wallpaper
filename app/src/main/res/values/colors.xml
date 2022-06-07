@@ -10,4 +10,5 @@
     <color name="background_color">#FCFCFC</color>
     <color name="splash_background_color">#E5E5E5</color>
     <color name="purple">#FF4668</color>
+    <color name="dividerColor">#8A8787</color>
 </resources>

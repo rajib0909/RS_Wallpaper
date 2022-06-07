@@ -8,8 +8,12 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rsdesign.wallpaper.R;
@@ -42,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mainBinding.navView, navController);
+
+
+        mainBinding.btnLogin.setOnClickListener(l-> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        mainBinding.btnProfile.setOnClickListener(l-> {
+            mainBinding.drawerLayout.close();
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_profile);
+        });
+
     }
 
     /**
