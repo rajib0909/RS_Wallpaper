@@ -8,10 +8,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllCategoryAdapter;
@@ -21,6 +23,8 @@ import com.rsdesign.wallpaper.model.Result;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 
 
 public class CategoryFragment extends Fragment {
@@ -41,6 +45,13 @@ public class CategoryFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         categoryBinding.categoryList.setLayoutManager(layoutManager);
         categoryBinding.categoryList.setAdapter(categoryAdapter);
+
+
+      /*  ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(categoryAdapter);
+        scaleInAnimationAdapter.setDuration(500);
+        scaleInAnimationAdapter.setInterpolator(new AccelerateDecelerateInterpolator());
+        scaleInAnimationAdapter.setFirstOnly(false);
+        categoryBinding.categoryList.setAdapter(scaleInAnimationAdapter);*/
 
         categoryAdapter.setOnClickCategory(new ShowAllCategoryAdapter.OnClickCategory() {
             @Override

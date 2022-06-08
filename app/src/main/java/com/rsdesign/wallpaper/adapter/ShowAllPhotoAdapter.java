@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -14,11 +17,12 @@ import com.rsdesign.wallpaper.databinding.ItemPhotoListBinding;
 import com.rsdesign.wallpaper.model.Result;
 
 import java.util.List;
+import java.util.Random;
 
 public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapter.ViewHolder> {
     private List<Result> allResultList;
     private Context context;
-
+    private int lastPosition = -1;
     public OnClickPhoto onClickPhoto;
 
 
@@ -57,11 +61,19 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
         return new ViewHolder(photoListBinding.getRoot(), photoListBinding);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Result datum = allResultList.get(position);
         holder.bind(datum);
+
     }
+
+
+
+
+
 
     @Override
     public int getItemCount() {
@@ -89,5 +101,6 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
             photoListBinding.executePendingBindings();
 
         }
+
     }
 }

@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
@@ -40,6 +42,7 @@ public class HomeFragment extends Fragment {
         homeBinding.photoList.setLayoutManager(layoutManager);
         homeBinding.photoList.setAdapter(allPhotoAdapter);
 
+
         allPhotoAdapter.setOnClickPhoto(new ShowAllPhotoAdapter.OnClickPhoto() {
             @Override
             public void onClickPhoto(int id) {
@@ -47,6 +50,7 @@ public class HomeFragment extends Fragment {
                 navController.navigate(R.id.navigation_view_photo);
             }
         });
+
 
         homeBinding.uploadImageButton.setOnClickListener(l->{
             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
@@ -62,7 +66,6 @@ public class HomeFragment extends Fragment {
 
         allPhotoAdapter.updatePhotoList(results);
         allPhotoAdapter.notifyDataSetChanged();
-
 
 
         return homeBinding.getRoot();

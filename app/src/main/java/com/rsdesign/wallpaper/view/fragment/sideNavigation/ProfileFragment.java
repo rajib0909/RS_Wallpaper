@@ -17,6 +17,7 @@ import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.databinding.FragmentProfileBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.view.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,4 +59,19 @@ public class ProfileFragment extends Fragment {
 
         return profileBinding.getRoot();
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        MainActivity.hideBottomNav();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MainActivity.showBottomNav();
+    }
+
+
 }

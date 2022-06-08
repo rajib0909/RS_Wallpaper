@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_category.xml" value="0.22447916666666667" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_home.xml" value="0.25729166666666664" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/item_photo_category.xml" value="0.22447916666666667" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_bell.xml" value="0.265" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_nav_menu_icon.xml" value="0.265" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_onboarding_two.xml" value="0.265" />
@@ -44,7 +47,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
