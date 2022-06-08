@@ -1,5 +1,6 @@
 package com.rsdesign.wallpaper.view;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -9,8 +10,14 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -55,6 +62,44 @@ public class MainActivity extends AppCompatActivity {
             navController.navigate(R.id.navigation_profile);
         });
 
+        mainBinding.btnAboutUs.setOnClickListener(l-> showDialog("About Us !"));
+        mainBinding.btnContactUs.setOnClickListener(l-> showDialog("Contact Us !"));
+        mainBinding.btnPrivacyPolicy.setOnClickListener(l-> showDialog("Privacy Policy !"));
+
+
+    }
+
+    /**
+     * TODO: showRunningTempoChangeDialog
+     * AlertDialog for showRunningTempoChangeDialog
+     */
+    private void showDialog(String title) {
+        mainBinding.drawerLayout.close();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+        builder.setView(view);
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.setCanceledOnTouchOutside(false);
+
+        TextView okButton = view.findViewById(R.id.btn_ok);
+        TextView tvTitle = view.findViewById(R.id.tv_title);
+
+        tvTitle.setText(title);
+
+        okButton.setOnClickListener(l -> {
+            alertDialog.cancel();
+        });
+
+        alertDialog.show();
+       // customSizeAlertDialog(alertDialog, getActivity(), 0.7f);
+
+        Rect displayRectangle = new Rect();
+        Window window = this.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        alertDialog.getWindow().setLayout((int) (displayRectangle.width() *
+                0.9f), alertDialog.getWindow().getAttributes().height);
     }
 
     /**
@@ -70,4 +115,10 @@ public class MainActivity extends AppCompatActivity {
     public static void showBottomNav() {
         navigationView.setVisibility(View.VISIBLE);
     }
+
+
+    /**
+     * Hide bottom Navigation
+     */
+
 }

@@ -47,6 +47,12 @@
         android:label=""
         tools:layout="@layout/fragment_profile" />
 
+    <fragment
+        android:id="@+id/navigation_upload_image"
+        android:name="com.rsdesign.wallpaper.view.fragment.UploadImageFragment"
+        android:label=""
+        tools:layout="@layout/fragment_upload_image" />
+
 
 
 </navigation>
