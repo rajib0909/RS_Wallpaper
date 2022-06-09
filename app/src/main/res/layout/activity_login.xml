@@ -57,7 +57,7 @@
                     app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_customize_now"
+                    android:id="@+id/btn_facebook"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="26dp"

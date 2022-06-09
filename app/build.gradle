@@ -73,4 +73,8 @@ dependencies {
     implementation 'com.github.dhaval2404:imagepicker:2.1'
 
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+
+    // Facebook login
+    implementation 'com.facebook.android:facebook-login:latest.release'
+
 }
