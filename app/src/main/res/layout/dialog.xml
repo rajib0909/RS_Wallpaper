@@ -23,6 +23,7 @@
             android:textColor="@color/theme_color"
             android:textFontWeight="600"
             android:textSize="24sp" />
+
         <!--    <TextView
                 android:id="@+id/tv_body"
                 android:layout_marginTop="4dp"

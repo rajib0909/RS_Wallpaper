@@ -21,7 +21,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
                 android:background="@color/colorPrimary"
-                android:visibility="visible">
+                android:visibility="visible"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
                 <ImageView
                     android:id="@+id/sideNav"
@@ -31,6 +32,7 @@
                     android:src="@drawable/ic_nav_menu_icon" />
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -41,8 +43,11 @@
                         android:id="@+id/btn_diamond"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_marginBottom="2dp"
                         android:src="@drawable/ic_diamond" />
+
+                    <!--
 
                     <ImageView
                         android:id="@+id/btn_search"
@@ -58,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:layout_marginEnd="20dp"
-                        android:src="@drawable/ic_bell" />
+                        android:src="@drawable/ic_bell" />-->
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>

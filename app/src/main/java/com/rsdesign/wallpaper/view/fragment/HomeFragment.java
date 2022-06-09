@@ -3,6 +3,7 @@ package com.rsdesign.wallpaper.view.fragment;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -37,6 +38,11 @@ public class HomeFragment extends Fragment {
 
         homeBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
        // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+
+
+
+
         allPhotoAdapter = new ShowAllPhotoAdapter(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         homeBinding.photoList.setLayoutManager(layoutManager);

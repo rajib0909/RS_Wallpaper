@@ -2,6 +2,7 @@ package com.rsdesign.wallpaper.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
@@ -15,12 +16,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rsdesign.wallpaper.R;
@@ -31,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding mainBinding;
     static BottomNavigationView navigationView;
     static NavController navController;
+    AppBarConfiguration appBarConfiguration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +43,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
         navigationView = mainBinding.navView;
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+        appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_category, R.id.navigation_trending, R.id.navigation_download)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -101,6 +102,24 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.getWindow().setLayout((int) (displayRectangle.width() *
                 0.9f), alertDialog.getWindow().getAttributes().height);
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.action_menu, menu);
+        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.btn_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("Search wallpaper...");
+        searchView.setIconified(false);
+
+
+       // menu.findItem(R.id.btn_bell).setVisible(false);
+        return true;
+    }
+
+
+
 
     /**
      * Hide bottom Navigation
