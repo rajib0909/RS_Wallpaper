@@ -1,10 +1,17 @@
 package com.rsdesign.wallpaper.view;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -14,6 +21,16 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.rsdesign.wallpaper.R;
 
@@ -26,16 +43,31 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-    //GoogleSignInClient googleSignInClient;
+    GoogleSignInClient googleSignInClient;
     CallbackManager callbackManager;
+
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+
+    private AdView bannerAdView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        MaterialButton fbButton = findViewById(R.id.btn_facebook);
+        preferences = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        editor = preferences.edit();
 
+        MaterialButton fbButton = findViewById(R.id.btn_facebook);
+        MaterialButton googleButton = findViewById(R.id.btn_google);
+        bannerAdView = findViewById(R.id.adView);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        bannerAdView.loadAd(adRequest);
+
+        // Facebook login
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -57,6 +89,14 @@ public class LoginActivity extends AppCompatActivity {
                                             accountMap.put("uid", object.getString("id"));
                                             accountMap.put("name", object.getString("name"));
                                             accountMap.put("provider", "facebook");
+                                            String imageUrl = "https://graph.facebook.com/" + object.getString("id")+ "/picture?return_ssl_resources=1";
+                                        //    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
+                                            editor.putString("userName", object.getString("name"));
+                                            editor.putString("provider", "facebook");
+                                            editor.putBoolean("isLogin", true);
+                                            editor.commit();
+                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                            finishAffinity();
                                            // socialLogin(accountMap);
                                             Log.d("fbid", object.getString("id"));
                                         } catch (JSONException e) {
@@ -87,6 +127,59 @@ public class LoginActivity extends AppCompatActivity {
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         });
 
+
+
+        // Google login
+
+        ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+                    Intent data = result.getData();
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                    handleResult(task);
+                }
+                if (result.getResultCode() == RESULT_CANCELED) {
+                    Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        googleSignInClient = GoogleSignIn.getClient(this, options);
+
+
+        googleButton.setOnClickListener(l -> {
+            Intent intent = googleSignInClient.getSignInIntent();
+            launcher.launch(intent);
+
+        });
+
+    }
+
+    private void handleResult(Task<GoogleSignInAccount> task) {
+        task.addOnSuccessListener(googleSignInAccount -> {
+            Map<String, String> accountMap = new HashMap<>();
+            accountMap.put("uid", googleSignInAccount.getId());
+            accountMap.put("email", googleSignInAccount.getEmail());
+            accountMap.put("name", googleSignInAccount.getDisplayName());
+            accountMap.put("provider", "google");
+            editor.putString("userName", googleSignInAccount.getDisplayName());
+            editor.putString("provider", "google");
+            editor.putBoolean("isLogin", true);
+            editor.commit();
+
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finishAffinity();
+
+           // socialLogin(accountMap);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+        });
     }
 
 

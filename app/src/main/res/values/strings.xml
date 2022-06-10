@@ -57,4 +57,10 @@
     <string name="facebook_app_id">553960883114258</string>
     <string name="fb_login_protocol_scheme">fb553960883114258</string>
     <string name="facebook_client_token">56789</string>
+    <string name="logout">Logout</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="reword_ad_unit_id">"ca-app-pub-3940256099942544/5224354917"</string>
+
 </resources>
