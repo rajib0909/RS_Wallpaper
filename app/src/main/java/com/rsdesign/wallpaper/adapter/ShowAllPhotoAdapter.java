@@ -55,6 +55,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         ItemPhotoListBinding photoListBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()), R.layout.item_photo_list, parent, false);
 
