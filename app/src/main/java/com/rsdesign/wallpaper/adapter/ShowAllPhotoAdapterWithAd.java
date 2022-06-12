@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.card.MaterialCardView;
 import com.rsdesign.wallpaper.R;
-import com.rsdesign.wallpaper.databinding.ItemNativeAdBinding;
-import com.rsdesign.wallpaper.databinding.ItemPhotoListBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.util.utils;
 
 import java.util.List;
 
@@ -24,6 +23,15 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     private List<Object> allResultList;
     private Context context;
 
+    public OnClickPhoto onClickPhoto;
+
+
+    public void setOnClickPhoto(ShowAllPhotoAdapterWithAd.OnClickPhoto onClickPhoto) {
+        this.onClickPhoto = onClickPhoto;
+
+    }
+
+
     public ShowAllPhotoAdapterWithAd(List<Object> allResultList, Context context) {
         this.allResultList = allResultList;
         this.context = context;
@@ -31,6 +39,10 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     public void updatePhotoList(List<Object> allResultList) {
         this.allResultList.addAll(allResultList);
+    }
+
+    public interface OnClickPhoto {
+        void onClickPhoto(int id);
     }
 
     @NonNull
@@ -80,6 +92,9 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
                     // Add the banner ad to the ad view.
                     adCardView.addView(adView);
+
+
+
                 }
                 break;
             case ITEM_TYPE_PHOTO:
@@ -90,8 +105,8 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     Result result = (Result) allResultList.get(position);
 
                     //Set Title Name
-                    photoVIewHolder.photoTitle.setText(result.getTitle());
-
+                  //  photoVIewHolder.photoTitle.setText(result.getTitle());
+                    photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
 
                 }
                 break;
@@ -113,7 +128,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
         if (position==0 || allResultList.get(position) instanceof Result){
             return ITEM_TYPE_PHOTO;
         }else{
-            if (position % 4 ==0){
+            if (position % utils.AD_PER_PHOTO ==0){
                 return ITEM_TYPE_BANNER_AD;
             }else
                 return ITEM_TYPE_PHOTO;
@@ -123,18 +138,23 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     //photo view holder
     class PhotoVIewHolder extends RecyclerView.ViewHolder{
         TextView photoTitle;
+        MaterialCardView seeDetails;
 
         public PhotoVIewHolder(@NonNull View itemView) {
             super(itemView);
             photoTitle = itemView.findViewById(R.id.title);
+            seeDetails = itemView.findViewById(R.id.seeDetails);
+
         }
     }
 
     //Ad view holder
     class AdVIewHolder extends RecyclerView.ViewHolder{
+       // TemplateView nativeAd;
 
         public AdVIewHolder(@NonNull View itemView) {
             super(itemView);
+           // nativeAd = itemView.findViewById(R.id.my_native_template);
 
         }
     }

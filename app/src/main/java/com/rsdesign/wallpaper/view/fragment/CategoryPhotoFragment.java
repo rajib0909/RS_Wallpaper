@@ -1,6 +1,9 @@
 package com.rsdesign.wallpaper.view.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,12 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -22,10 +19,10 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 import com.rsdesign.wallpaper.R;
-import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentCategoryPhotoBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.util.utils;
 import com.rsdesign.wallpaper.view.MainActivity;
 
 import java.util.ArrayList;
@@ -35,11 +32,7 @@ import java.util.List;
 public class CategoryPhotoFragment extends Fragment {
 
     FragmentCategoryPhotoBinding categoryPhotoBinding;
-    private List<Result> results;
     private List<Object> photoResults;
-
- //   private ShowAllPhotoAdapter allPhotoAdapter;
-
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
 
     @Override
@@ -47,40 +40,19 @@ public class CategoryPhotoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         categoryPhotoBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_photo, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        categoryPhotoBinding.btnBack.setOnClickListener(l-> getActivity().onBackPressed());
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        categoryPhotoBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
 
 
 
-      /*  allPhotoAdapter = new ShowAllPhotoAdapter(new ArrayList<>(), getContext());
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
-        categoryPhotoBinding.photoList.setAdapter(allPhotoAdapter);
-
-        allPhotoAdapter.setOnClickPhoto(new ShowAllPhotoAdapter.OnClickPhoto() {
-            @Override
-            public void onClickPhoto(int id) {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                navController.navigate(R.id.navigation_view_photo);
-            }
-        });*/
-
-
-
-        results = new ArrayList<>();
-        for (int i =0; i<10;i++){
-            Result result = new Result();
-            result.setTitle("test");
-            results.add(result);
-        }
 
         photoResults = new ArrayList<>();
-        for (int i =0; i<15;i++){
+        for (int i = 0; i < 30; i++) {
             Result result = new Result();
             result.setTitle("test");
             photoResults.add(result);
         }
-        
+
         addBannerAds();
 
 
@@ -90,9 +62,9 @@ public class CategoryPhotoFragment extends Fragment {
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (position == 0){
+                if (position == 0) {
                     return 1;
-                }else if (position % 4  != 0) {
+                } else if (position % utils.AD_PER_PHOTO != 0) {
                     return 1; // ITEMS AT POSITION 1 AND 6 OCCUPY 2 SPACES
                 } else {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
@@ -102,6 +74,16 @@ public class CategoryPhotoFragment extends Fragment {
         categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
         categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
+
+        allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
+                                                  @Override
+                                                  public void onClickPhoto(int id) {
+                                                      NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                                                      navController.navigate(R.id.navigation_view_photo);
+                                                  }
+                                              }
+        );
+
         allPhotoAdapterWithAd.updatePhotoList(photoResults);
         allPhotoAdapterWithAd.notifyDataSetChanged();
 
@@ -109,30 +91,28 @@ public class CategoryPhotoFragment extends Fragment {
     }
 
     private void addBannerAds() {
-        for (int i= 4; i<photoResults.size() ; i+=4){
+        for (int i = utils.AD_PER_PHOTO; i < photoResults.size(); i += utils.AD_PER_PHOTO) {
             AdView adView = new AdView(getContext());
             adView.setAdSize(AdSize.BANNER);
             adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
             photoResults.add(i, adView);
-            
+
             loadBannerAds();
         }
     }
 
     private void loadBannerAds() {
-        loadBannerAds(4);
+        loadBannerAds(utils.AD_PER_PHOTO);
     }
 
     private void loadBannerAds(int index) {
 
-        if (index >= photoResults.size())
-        {
+        if (index >= photoResults.size()) {
             return;
         }
 
         Object item = photoResults.get(index);
-        if (!(item instanceof AdView))
-        {
+        if (!(item instanceof AdView)) {
             throw new ClassCastException("Expected item at index " + index + " to be a banner ad" + " ad.");
         }
 
@@ -144,13 +124,13 @@ public class CategoryPhotoFragment extends Fragment {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
-                loadBannerAds(index + 4);
+                loadBannerAds(index + utils.AD_PER_PHOTO);
             }
 
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                loadBannerAds(index + 4);
+                loadBannerAds(index + utils.AD_PER_PHOTO);
             }
         });
 
@@ -159,12 +139,9 @@ public class CategoryPhotoFragment extends Fragment {
     }
 
     @Override
-    public void onResume()
-    {
-        for (Object item : photoResults)
-        {
-            if (item instanceof AdView)
-            {
+    public void onResume() {
+        for (Object item : photoResults) {
+            if (item instanceof AdView) {
                 AdView adView = (AdView) item;
                 adView.resume();
             }
@@ -173,12 +150,9 @@ public class CategoryPhotoFragment extends Fragment {
     }
 
     @Override
-    public void onPause()
-    {
-        for (Object item : photoResults)
-        {
-            if (item instanceof AdView)
-            {
+    public void onPause() {
+        for (Object item : photoResults) {
+            if (item instanceof AdView) {
                 AdView adView = (AdView) item;
                 adView.pause();
             }
