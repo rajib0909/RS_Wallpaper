@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -54,18 +56,18 @@ public class HomeFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
 
-
-        viewModel.allWallpaper();
-
-
         photoResults = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+
+
+
+
+       /* for (int i = 0; i < 30; i++) {
             Result result = new Result();
             result.setTitle("test");
             photoResults.add(result);
-        }
+        }*/
 
-        addBannerAds();
+        // addBannerAds();
 
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
@@ -86,6 +88,8 @@ public class HomeFragment extends Fragment {
         homeBinding.photoList.setLayoutManager(layoutManager);
         homeBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
+        viewModel.allWallpaper();
+        observerAllWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
@@ -96,9 +100,9 @@ public class HomeFragment extends Fragment {
                                               }
         );
 
-        allPhotoAdapterWithAd.updatePhotoList(photoResults);
+     /*   allPhotoAdapterWithAd.updatePhotoList(photoResults);
         allPhotoAdapterWithAd.notifyDataSetChanged();
-
+*/
 
 
       /*  allPhotoAdapter = new ShowAllPhotoAdapter(new ArrayList<>(), getContext());
@@ -138,6 +142,33 @@ public class HomeFragment extends Fragment {
         });
 
         return homeBinding.getRoot();
+    }
+
+
+    private void observerAllWallpapersViewModel() {
+        viewModel.allWallpaperMutableLiveData.observe(
+                getViewLifecycleOwner(),
+                allWallpaper -> {
+                    if (allWallpaper.getSuccess()) {
+                        photoResults.addAll(allWallpaper.getData());
+                        addBannerAds();
+                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                        allPhotoAdapterWithAd.notifyDataSetChanged();
+                    }
+
+                    viewModel.allWallpaperMutableLiveData = new MutableLiveData<>();
+                }
+        );
+        viewModel.allWallpaperLoadError.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError)
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                        viewModel.allWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
     }
 
     private void addBannerAds() {

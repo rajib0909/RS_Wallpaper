@@ -139,7 +139,7 @@ public class PhotoViewFragment extends Fragment {
 
 
         photoViewBinding.btnDownload.setOnClickListener(l->{
-           // downloadImageNew("RS wallpaper", "https://media.geeksforgeeks.org/wp-content/uploads/20210224040124/JSBinCollaborativeJavaScriptDebugging6-300x160.png");
+            downloadImageNew("RS wallpaper", "https://media.geeksforgeeks.org/wp-content/uploads/20210224040124/JSBinCollaborativeJavaScriptDebugging6-300x160.png");
             if (mInterstitialAd != null){
                 mInterstitialAd.show(getActivity());
             }else {

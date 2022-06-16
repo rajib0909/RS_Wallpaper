@@ -4,15 +4,18 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.card.MaterialCardView;
 import com.rsdesign.wallpaper.R;
-import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
 
 import java.util.List;
@@ -99,14 +102,20 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                 break;
             case ITEM_TYPE_PHOTO:
             default:
-                if (allResultList.get(position) instanceof Result)
+                if (allResultList.get(position) instanceof Datum)
                 {
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
-                    Result result = (Result) allResultList.get(position);
+                    Datum result = (Datum) allResultList.get(position);
 
                     //Set Title Name
-                  //  photoVIewHolder.photoTitle.setText(result.getTitle());
+                    photoVIewHolder.photoTitle.setText(result.getTitle());
+                    photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
                     photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
+                    RequestOptions options = new RequestOptions()
+                            .placeholder(R.drawable.ic_logo)
+                            .error(R.drawable.ic_logo);
+
+                    Glide.with(context).load(result.getImage()).apply(options).into(photoVIewHolder.image);
 
                 }
                 break;
@@ -125,7 +134,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        if (position==0 || allResultList.get(position) instanceof Result){
+        if (position==0 || allResultList.get(position) instanceof Datum){
             return ITEM_TYPE_PHOTO;
         }else{
             if (position % utils.AD_PER_PHOTO ==0){
@@ -137,12 +146,16 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     //photo view holder
     class PhotoVIewHolder extends RecyclerView.ViewHolder{
-        TextView photoTitle;
+        TextView photoTitle, photoType;
+        ImageView image;
         MaterialCardView seeDetails;
+
 
         public PhotoVIewHolder(@NonNull View itemView) {
             super(itemView);
             photoTitle = itemView.findViewById(R.id.title);
+            image = itemView.findViewById(R.id.image);
+            photoType = itemView.findViewById(R.id.photoType);
             seeDetails = itemView.findViewById(R.id.seeDetails);
 
         }
