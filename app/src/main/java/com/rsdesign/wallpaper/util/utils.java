@@ -1,5 +1,5 @@
 package com.rsdesign.wallpaper.util;
 
 public class utils {
-    public static final int AD_PER_PHOTO = 7;
+    public static final int AD_PER_PHOTO = 3;
 }

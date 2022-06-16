@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,6 +29,7 @@ import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentHomeBinding;
 import com.rsdesign.wallpaper.model.Result;
 import com.rsdesign.wallpaper.util.utils;
+import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class HomeFragment extends Fragment {
         private ShowAllPhotoAdapter allPhotoAdapter;*/
     private List<Object> photoResults;
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
+    private ViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +51,11 @@ public class HomeFragment extends Fragment {
 
         homeBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+
+
+        viewModel.allWallpaper();
 
 
         photoResults = new ArrayList<>();
@@ -123,6 +131,11 @@ public class HomeFragment extends Fragment {
         allPhotoAdapter.updatePhotoList(results);
         allPhotoAdapter.notifyDataSetChanged();
 */
+
+        homeBinding.uploadImageButton.setOnClickListener(l->{
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_upload_image);
+        });
 
         return homeBinding.getRoot();
     }
