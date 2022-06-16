@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
-     /*   AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+       /* AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
                 .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
                     @Override
                     public void onNativeAdLoaded(NativeAd nativeAd) {
@@ -85,8 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .build();
 
-        adLoader.loadAd(new AdRequest.Builder().build());
-*/
+        adLoader.loadAd(new AdRequest.Builder().build());*/
 
 
         // Facebook login

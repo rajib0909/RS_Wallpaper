@@ -23,6 +23,7 @@ import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentTrendingBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class TrendingFragment extends Fragment {
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
-                                                  public void onClickPhoto(int id) {
+                                                  public void onClickPhoto(Datum datum) {
                                                       NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
                                                       navController.navigate(R.id.navigation_view_photo);
                                                   }

@@ -20,10 +20,15 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -36,6 +41,7 @@ import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.FragmentPhotoViewBinding;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.view.MainActivity;
 
 import java.io.File;
@@ -50,6 +56,7 @@ public class PhotoViewFragment extends Fragment {
     ProgressDialog mProgressDialog;
     private InterstitialAd mInterstitialAd;
     private RewardedAd mRewardedAd;
+    private Datum data = null;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,6 +68,17 @@ public class PhotoViewFragment extends Fragment {
         photoViewBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
         // creating the instance of the WallpaperManager
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            data = (Datum) arguments.getSerializable("PhotoDetails");
+        }
+
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.ic_logo)
+                .error(R.drawable.ic_logo);
+
+        Glide.with(getContext()).load(data.getImage()).apply(options).into(photoViewBinding.image);
 
 
         loadInterstitialAd();
@@ -89,18 +107,17 @@ public class PhotoViewFragment extends Fragment {
             @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
-                try {
+              /*  try {
                     // set the wallpaper by calling the setResource function and
                     // passing the drawable file
                     wallpaperManager.setResource(R.drawable.demo_image);
                 } catch (IOException e) {
                     // here the errors can be logged instead of printStackTrace
                     e.printStackTrace();
-                }
-              /*  String url = "https://img.freepik.com/free-photo/black-t-shirts-with-copy-space_53876-102012.jpg?t=st=1654632155~exp=1654632755~hmac=28c8be6d8a5c32da11f993d19d383f9c1de121684325af0eccbdb0d1efa11bf1&w=1060";
+                }*/
                 Glide.with(getContext())
                         .asBitmap()
-                        .load(url).into(new SimpleTarget<Bitmap>() {
+                        .load(data.getImage()).into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 //WallpaperManager.getInstance(getActivity().getApplicationContext()).setBitmap(resource);
@@ -114,7 +131,7 @@ public class PhotoViewFragment extends Fragment {
                                 }
                             }
 
-                        });*/
+                        });
 
                 if (mRewardedAd != null) {
                     Activity activityContext = getActivity();
@@ -139,7 +156,7 @@ public class PhotoViewFragment extends Fragment {
 
 
         photoViewBinding.btnDownload.setOnClickListener(l->{
-            downloadImageNew("RS wallpaper", "https://media.geeksforgeeks.org/wp-content/uploads/20210224040124/JSBinCollaborativeJavaScriptDebugging6-300x160.png");
+            downloadImageNew("RS wallpaper", data.getImage());
             if (mInterstitialAd != null){
                 mInterstitialAd.show(getActivity());
             }else {

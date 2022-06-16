@@ -1,12 +1,16 @@
 
 package com.rsdesign.wallpaper.model.allWallpaper;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum {
+public class Datum implements Serializable {
 
+    @SerializedName("id")
+    @Expose
+    private Integer id;
     @SerializedName("title")
     @Expose
     private String title;
@@ -33,7 +37,15 @@ public class Datum {
     private List<Category> categories = null;
     @SerializedName("likes")
     @Expose
-    private List<Object> likes = null;
+    private Boolean likes;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -99,12 +111,11 @@ public class Datum {
         this.categories = categories;
     }
 
-    public List<Object> getLikes() {
+    public Boolean getLikes() {
         return likes;
     }
 
-    public void setLikes(List<Object> likes) {
+    public void setLikes(Boolean likes) {
         this.likes = likes;
     }
-
 }

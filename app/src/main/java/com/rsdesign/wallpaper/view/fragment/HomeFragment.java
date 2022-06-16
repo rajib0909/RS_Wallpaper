@@ -30,6 +30,7 @@ import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentHomeBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
@@ -40,8 +41,6 @@ import java.util.List;
 public class HomeFragment extends Fragment {
 
     FragmentHomeBinding homeBinding;
-    /*    private List<Result> results;
-        private ShowAllPhotoAdapter allPhotoAdapter;*/
     private List<Object> photoResults;
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
     private ViewModel viewModel;
@@ -60,14 +59,6 @@ public class HomeFragment extends Fragment {
 
 
 
-
-       /* for (int i = 0; i < 30; i++) {
-            Result result = new Result();
-            result.setTitle("test");
-            photoResults.add(result);
-        }*/
-
-        // addBannerAds();
 
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
@@ -93,48 +84,17 @@ public class HomeFragment extends Fragment {
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
-                                                  public void onClickPhoto(int id) {
+                                                  public void onClickPhoto(Datum datum) {
                                                       NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                                                      navController.navigate(R.id.navigation_view_photo);
+                                                      Bundle bundle = new Bundle();
+                                                      bundle.putSerializable("PhotoDetails", datum);
+                                                      navController.navigate(R.id.navigation_view_photo, bundle);
+
                                                   }
                                               }
         );
 
-     /*   allPhotoAdapterWithAd.updatePhotoList(photoResults);
-        allPhotoAdapterWithAd.notifyDataSetChanged();
-*/
 
-
-      /*  allPhotoAdapter = new ShowAllPhotoAdapter(new ArrayList<>(), getContext());
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        homeBinding.photoList.setLayoutManager(layoutManager);
-        homeBinding.photoList.setAdapter(allPhotoAdapter);
-
-
-        allPhotoAdapter.setOnClickPhoto(new ShowAllPhotoAdapter.OnClickPhoto() {
-            @Override
-            public void onClickPhoto(int id) {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                navController.navigate(R.id.navigation_view_photo);
-            }
-        });
-
-
-        homeBinding.uploadImageButton.setOnClickListener(l->{
-            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-            navController.navigate(R.id.navigation_upload_image);
-        });
-
-        results = new ArrayList<>();
-        for (int i =0; i<10;i++){
-            Result result = new Result();
-            result.setTitle("test");
-            results.add(result);
-        }
-
-        allPhotoAdapter.updatePhotoList(results);
-        allPhotoAdapter.notifyDataSetChanged();
-*/
 
         homeBinding.uploadImageButton.setOnClickListener(l->{
             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);

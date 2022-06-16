@@ -45,14 +45,13 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     }
 
     public interface OnClickPhoto {
-        void onClickPhoto(int id);
+        void onClickPhoto(Datum datum);
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        switch (viewType)
-        {
+        switch (viewType) {
             case ITEM_TYPE_BANNER_AD:
                 View bannerLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_native_ad, parent, false);
                 //Create View Holder
@@ -71,11 +70,9 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
 
-        switch (viewType)
-        {
+        switch (viewType) {
             case ITEM_TYPE_BANNER_AD:
-                if (allResultList.get(position) instanceof AdView)
-                {
+                if (allResultList.get(position) instanceof AdView) {
                     AdVIewHolder adVIewHolder = (AdVIewHolder) holder;
                     AdView adView = (AdView) allResultList.get(position);
                     ViewGroup adCardView = (ViewGroup) adVIewHolder.itemView;
@@ -84,12 +81,10 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     // AdViewHolder of any subviews in case it has a different
                     // AdView associated with it, and make sure the AdView for this position doesn't
                     // already have a parent of a different recycled AdViewHolder.
-                    if (adCardView.getChildCount() > 0)
-                    {
+                    if (adCardView.getChildCount() > 0) {
                         adCardView.removeAllViews();
                     }
-                    if (adView.getParent() != null)
-                    {
+                    if (adView.getParent() != null) {
                         ((ViewGroup) adView.getParent()).removeView(adView);
                     }
 
@@ -97,20 +92,18 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     adCardView.addView(adView);
 
 
-
                 }
                 break;
             case ITEM_TYPE_PHOTO:
             default:
-                if (allResultList.get(position) instanceof Datum)
-                {
+                if (allResultList.get(position) instanceof Datum) {
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
                     Datum result = (Datum) allResultList.get(position);
 
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
-                    photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
+                    photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.ic_logo)
                             .error(R.drawable.ic_logo);
@@ -134,18 +127,18 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        if (position==0 || allResultList.get(position) instanceof Datum){
+        if (position == 0 || allResultList.get(position) instanceof Datum) {
             return ITEM_TYPE_PHOTO;
-        }else{
-            if (position % utils.AD_PER_PHOTO ==0){
+        } else {
+            if (position % utils.AD_PER_PHOTO == 0) {
                 return ITEM_TYPE_BANNER_AD;
-            }else
+            } else
                 return ITEM_TYPE_PHOTO;
         }
     }
 
     //photo view holder
-    class PhotoVIewHolder extends RecyclerView.ViewHolder{
+    class PhotoVIewHolder extends RecyclerView.ViewHolder {
         TextView photoTitle, photoType;
         ImageView image;
         MaterialCardView seeDetails;
@@ -162,12 +155,12 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     }
 
     //Ad view holder
-    class AdVIewHolder extends RecyclerView.ViewHolder{
-       // TemplateView nativeAd;
+    class AdVIewHolder extends RecyclerView.ViewHolder {
+        // TemplateView nativeAd;
 
         public AdVIewHolder(@NonNull View itemView) {
             super(itemView);
-           // nativeAd = itemView.findViewById(R.id.my_native_template);
+            // nativeAd = itemView.findViewById(R.id.my_native_template);
 
         }
     }
