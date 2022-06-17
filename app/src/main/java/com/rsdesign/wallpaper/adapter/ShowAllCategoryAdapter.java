@@ -14,11 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.ItemPhotoCategoryBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.categoryList.Datum;
 
 import java.util.List;
 
 public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategoryAdapter.ViewHolder> {
-    private List<Result> allResultList;
+    private List<Datum> allResultList;
     private Context context;
 
     public OnClickCategory onClickCategory;
@@ -30,7 +31,7 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
     }
 
 
-    public ShowAllCategoryAdapter(List<Result> allResultList, Context context) {
+    public ShowAllCategoryAdapter(List<Datum> allResultList, Context context) {
         this.allResultList = allResultList;
         this.context = context;
     }
@@ -41,7 +42,7 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
     }
 
 
-    public void updateCategoryList(List<Result> allResultList) {
+    public void updateCategoryList(List<Datum> allResultList) {
         this.allResultList.addAll(allResultList);
     }
 
@@ -61,7 +62,7 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Result datum = allResultList.get(position);
+        Datum datum = allResultList.get(position);
         holder.bind(datum);
     }
 
@@ -78,7 +79,7 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
             this.categoryBinding = categoryBinding;
         }
 
-        public void bind(Result datum) {
+        public void bind(Datum datum) {
 
           /*  RequestOptions options = new RequestOptions()
                     .placeholder(R.drawable.bongo)
@@ -86,7 +87,8 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
 
             Glide.with(context).load("https://image.tmdb.org/t/p/original" + datum.getPosterPath()).apply(options).into(allTopRatedMovieBinding.posterImage);
 */
-            categoryBinding.category.setOnClickListener(l -> onClickCategory.onClickCategory(1));
+            categoryBinding.category.setOnClickListener(l -> onClickCategory.onClickCategory(datum.getId()));
+            categoryBinding.categoryName.setText(datum.getDisplayName());
 
             categoryBinding.executePendingBindings();
 

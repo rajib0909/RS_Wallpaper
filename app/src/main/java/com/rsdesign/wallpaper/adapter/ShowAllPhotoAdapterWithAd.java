@@ -31,7 +31,6 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     public void setOnClickPhoto(ShowAllPhotoAdapterWithAd.OnClickPhoto onClickPhoto) {
         this.onClickPhoto = onClickPhoto;
-
     }
 
 
@@ -103,6 +102,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
+                    photoVIewHolder.likeCount.setText(String.valueOf(result.getLike()));
                     photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.ic_logo)
@@ -139,7 +139,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     //photo view holder
     class PhotoVIewHolder extends RecyclerView.ViewHolder {
-        TextView photoTitle, photoType;
+        TextView photoTitle, photoType, likeCount;
         ImageView image;
         MaterialCardView seeDetails;
 
@@ -150,6 +150,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
             image = itemView.findViewById(R.id.image);
             photoType = itemView.findViewById(R.id.photoType);
             seeDetails = itemView.findViewById(R.id.seeDetails);
+            likeCount = itemView.findViewById(R.id.likeCount);
 
         }
     }

@@ -1,5 +1,10 @@
 package com.rsdesign.wallpaper.view.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import static com.rsdesign.wallpaper.util.utils.categoryId;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,6 +31,7 @@ import com.rsdesign.wallpaper.model.Result;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
 import com.rsdesign.wallpaper.view.MainActivity;
+import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +42,10 @@ public class CategoryPhotoFragment extends Fragment {
     FragmentCategoryPhotoBinding categoryPhotoBinding;
     private List<Object> photoResults;
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
-
+    private boolean isLogin = false;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    private ViewModel viewModel;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -44,6 +54,14 @@ public class CategoryPhotoFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         categoryPhotoBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
 
+        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+
+        preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        editor = preferences.edit();
+
+        isLogin = preferences.getBoolean("isLogin", false);
+
+        viewModel.categoryWallpaper(String.valueOf(categoryId));
 
 
 

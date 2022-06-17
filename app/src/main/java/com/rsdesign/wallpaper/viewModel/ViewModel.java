@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.rsdesign.wallpaper.api.NetworkService;
 import com.rsdesign.wallpaper.model.allWallpaper.AllWallpaper;
+import com.rsdesign.wallpaper.model.categoryList.CategoryList;
+import com.rsdesign.wallpaper.model.categoryWallpaper.CategoryWallpaper;
+import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.io.File;
 import java.util.HashMap;
@@ -28,6 +31,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
      * only exposes immutable Auth LiveData objects to observe users
      */
     public MutableLiveData<AllWallpaper> allWallpaperMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<CategoryWallpaper> categoryWallpaperMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<ViewCount> viewCountMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<CategoryList> categoryListMutableLiveData = new MutableLiveData<>();
 
 
 
@@ -35,6 +41,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
      * only exposes immutable Boolen LiveData objects to observe usersLoadError
      */
     public MutableLiveData<Boolean> allWallpaperLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> categoryWallpaperLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> viewCountLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> categoryListLoadError = new MutableLiveData<>();
 
 
 
@@ -72,31 +81,85 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-
-    /*
-    public void getAppInfoResponse(String token, Map<String, Object> param) {
+    public void categoryWallpaper(String id) {
         disposable.add(
-                networkService.getAppInfoResponse(token, param)
+                networkService.categoryWallpaper(id)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<SetAppInfoResponse>() {
+                        .subscribeWith(new DisposableSingleObserver<CategoryWallpaper>() {
                             @Override
-                            public void onSuccess(@NonNull SetAppInfoResponse appInfoResponse) {
-                                appInfoResponseMutableLiveData.setValue(appInfoResponse);
-                                appInfoResponseError.setValue(false);
+                            public void onSuccess(@NonNull CategoryWallpaper categoryWallpaper) {
+                                categoryWallpaperMutableLiveData.setValue(categoryWallpaper);
+                                categoryWallpaperLoadError.setValue(false);
                             }
-
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                appInfoResponseError.setValue(true);
+                                categoryWallpaperLoadError.setValue(true);
                             }
                         })
         );
     }
-*/
 
+    public void allCategory() {
+        disposable.add(
+                networkService.allCategory()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<CategoryList>() {
+                            @Override
+                            public void onSuccess(@NonNull CategoryList categoryList) {
+                                categoryListMutableLiveData.setValue(categoryList);
+                                categoryListLoadError.setValue(false);
+                            }
 
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                categoryListLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+    public void viewCount(String id) {
+        disposable.add(
+                networkService.viewCount(id)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<ViewCount>() {
+                            @Override
+                            public void onSuccess(@NonNull ViewCount count) {
+                                viewCountMutableLiveData.setValue(count);
+                                viewCountLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                viewCountLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+    public void downloadCount(String id) {
+        disposable.add(
+                networkService.downloadCount(id)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<ViewCount>() {
+                            @Override
+                            public void onSuccess(@NonNull ViewCount count) {
+                                viewCountMutableLiveData.setValue(count);
+                                viewCountLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                viewCountLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
 
     /**
      * Using clear CompositeDisposable, but can accept new disposable

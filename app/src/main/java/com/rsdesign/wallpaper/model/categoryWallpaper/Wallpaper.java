@@ -1,12 +1,10 @@
 
-package com.rsdesign.wallpaper.model.allWallpaper;
+package com.rsdesign.wallpaper.model.categoryWallpaper;
 
-import java.io.Serializable;
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Datum implements Serializable {
+public class Wallpaper {
 
     @SerializedName("id")
     @Expose
@@ -35,9 +33,6 @@ public class Datum implements Serializable {
     @SerializedName("copyright_report")
     @Expose
     private String copyrightReport;
-    @SerializedName("categories")
-    @Expose
-    private List<Category> categories = null;
     @SerializedName("likes")
     @Expose
     private Boolean likes;
@@ -114,14 +109,6 @@ public class Datum implements Serializable {
         this.copyrightReport = copyrightReport;
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
     public Boolean getLikes() {
         return likes;
     }
@@ -129,4 +116,5 @@ public class Datum implements Serializable {
     public void setLikes(Boolean likes) {
         this.likes = likes;
     }
+
 }

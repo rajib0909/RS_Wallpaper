@@ -2,6 +2,9 @@ package com.rsdesign.wallpaper.api;
 
 
 import com.rsdesign.wallpaper.model.allWallpaper.AllWallpaper;
+import com.rsdesign.wallpaper.model.categoryList.CategoryList;
+import com.rsdesign.wallpaper.model.categoryWallpaper.CategoryWallpaper;
+import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.util.Map;
 
@@ -40,6 +43,10 @@ public class NetworkService {
     public Single<AllWallpaper> allWallpaper() {
         return api.allWallpaper();
     }
+    public Single<CategoryList> allCategory() { return api.allCategory(); }
+    public Single<ViewCount> viewCount(String id) { return api.viewCount(id); }
+    public Single<ViewCount> downloadCount(String id) { return api.downloadCount(id); }
+    public Single<CategoryWallpaper> categoryWallpaper(String id) { return api.categoryWallpaper(id); }
 
 
 }

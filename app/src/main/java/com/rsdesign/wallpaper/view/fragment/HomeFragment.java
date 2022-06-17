@@ -1,10 +1,17 @@
 package com.rsdesign.wallpaper.view.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -12,26 +19,19 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.rsdesign.wallpaper.R;
-import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentHomeBinding;
-import com.rsdesign.wallpaper.model.Result;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
+import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import java.util.ArrayList;
@@ -44,9 +44,12 @@ public class HomeFragment extends Fragment {
     private List<Object> photoResults;
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
     private ViewModel viewModel;
+    private boolean isLogin = false;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
@@ -55,10 +58,13 @@ public class HomeFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
 
+        preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        editor = preferences.edit();
+
+        isLogin = preferences.getBoolean("isLogin", false);
+
+
         photoResults = new ArrayList<>();
-
-
-
 
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
@@ -95,10 +101,24 @@ public class HomeFragment extends Fragment {
         );
 
 
+        homeBinding.uploadImageButton.setOnClickListener(l -> {
+            if (isLogin) {
+                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                navController.navigate(R.id.navigation_upload_image);
+            } else {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("Alert")
+                        .setMessage("Please, Login first!")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
 
-        homeBinding.uploadImageButton.setOnClickListener(l->{
-            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-            navController.navigate(R.id.navigation_upload_image);
         });
 
         return homeBinding.getRoot();

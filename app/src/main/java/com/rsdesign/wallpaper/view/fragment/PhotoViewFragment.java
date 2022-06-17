@@ -1,16 +1,17 @@
 package com.rsdesign.wallpaper.view.fragment;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -18,13 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -45,11 +46,10 @@ import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.FragmentPhotoViewBinding;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.view.MainActivity;
+import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 
 public class PhotoViewFragment extends Fragment {
@@ -60,6 +60,13 @@ public class PhotoViewFragment extends Fragment {
     private InterstitialAd mInterstitialAd;
     private RewardedAd mRewardedAd;
     private Datum data = null;
+    private boolean isLogin = false;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    private int photoWidth = 0;
+    private int photoHeight = 0;
+    private ViewModel viewModel;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,14 +74,25 @@ public class PhotoViewFragment extends Fragment {
 
         // Inflate the layout for this fragment
         photoViewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photo_view, container, false);
-
         photoViewBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
+        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+        preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        editor = preferences.edit();
+
+        isLogin = preferences.getBoolean("isLogin", false);
+
+
+
         // creating the instance of the WallpaperManager
         final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
 
         Bundle arguments = getArguments();
         if (arguments != null) {
             data = (Datum) arguments.getSerializable("PhotoDetails");
+        }
+
+        if (data!= null){
+            viewModel.viewCount(String.valueOf(data.getId()));
         }
 
         RequestOptions options = new RequestOptions()
@@ -89,16 +107,32 @@ public class PhotoViewFragment extends Fragment {
                 .into(new CustomTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-
-
-                        int width = resource.getHeight();
-                        int height = resource.getWidth();
+                        photoHeight = resource.getHeight();
+                        photoWidth = resource.getWidth();
+                        photoViewBinding.resolutionCount.setText(String.valueOf(photoHeight)+ "x"+ String.valueOf(photoWidth));
                     }
 
                     @Override
                     public void onLoadCleared(@Nullable Drawable placeholder) {
                     }
                 });
+
+        Glide.with(this)
+                .asFile()     // get size image url
+                .load(data.getImage())
+                .into(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable
+                            Transition<? super File> transition) {
+                        long test = resource.length();     //  /1024 kb
+                        photoViewBinding.sizeCount.setText(String.valueOf(resource.length()/1024)+ " KB");
+                    }
+                });
+
+        photoViewBinding.viewCount.setText(String.valueOf(Integer.parseInt(data.getViewCount())+1));
+        photoViewBinding.downloadCount.setText(data.getDownload());
+
+
 
         loadInterstitialAd();
         loadRewordAd();
@@ -175,6 +209,7 @@ public class PhotoViewFragment extends Fragment {
 
 
         photoViewBinding.btnDownload.setOnClickListener(l->{
+            viewModel.downloadCount(String.valueOf(data.getId()));
             downloadImageNew("RS wallpaper", data.getImage());
             if (mInterstitialAd != null){
                 mInterstitialAd.show(getActivity());
