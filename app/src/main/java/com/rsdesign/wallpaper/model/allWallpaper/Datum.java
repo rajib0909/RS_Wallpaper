@@ -35,6 +35,12 @@ public class Datum implements Serializable {
     @SerializedName("copyright_report")
     @Expose
     private String copyrightReport;
+    @SerializedName("user_id")
+    @Expose
+    private String userId;
+    @SerializedName("uploader")
+    @Expose
+    private Uploader uploader;
     @SerializedName("categories")
     @Expose
     private List<Category> categories = null;
@@ -114,6 +120,22 @@ public class Datum implements Serializable {
         this.copyrightReport = copyrightReport;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Uploader getUploader() {
+        return uploader;
+    }
+
+    public void setUploader(Uploader uploader) {
+        this.uploader = uploader;
+    }
+
     public List<Category> getCategories() {
         return categories;
     }
@@ -129,4 +151,5 @@ public class Datum implements Serializable {
     public void setLikes(Boolean likes) {
         this.likes = likes;
     }
+
 }

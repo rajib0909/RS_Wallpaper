@@ -66,6 +66,7 @@ public class CategoryFragment extends Fragment {
         categoryBinding.categoryList.setLayoutManager(layoutManager);
         categoryBinding.categoryList.setAdapter(categoryAdapter);
 
+        categoryBinding.loading.setVisibility(View.VISIBLE);
         viewModel.allCategory();
         observerAllCategoryViewModel();
       /*  ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(categoryAdapter);
@@ -119,6 +120,7 @@ public class CategoryFragment extends Fragment {
                     if (categoryList.getSuccess()) {
                         categoryAdapter.updateCategoryList(categoryList.getData());
                         categoryAdapter.notifyDataSetChanged();
+                        categoryBinding.loading.setVisibility(View.GONE);
                     }
 
                     viewModel.categoryListMutableLiveData = new MutableLiveData<>();
@@ -127,8 +129,11 @@ public class CategoryFragment extends Fragment {
         viewModel.categoryListLoadError.observe(
                 getViewLifecycleOwner(), isError -> {
                     if (isError != null) {
-                        if (isError)
+                        if (isError){
+                            categoryBinding.loading.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                        }
+
                         viewModel.categoryListLoadError = new MutableLiveData<>();
                     }
                 }

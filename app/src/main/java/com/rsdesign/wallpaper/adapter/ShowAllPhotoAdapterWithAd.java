@@ -1,11 +1,14 @@
 package com.rsdesign.wallpaper.adapter;
 
+import static com.rsdesign.wallpaper.util.utils.isLoginUser;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +30,11 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     private Context context;
 
     public OnClickPhoto onClickPhoto;
+    public OnClickFavorite onClickFavorite;
 
+    public void setOnClickFavorite(OnClickFavorite onClickFavorite) {
+        this.onClickFavorite = onClickFavorite;
+    }
 
     public void setOnClickPhoto(ShowAllPhotoAdapterWithAd.OnClickPhoto onClickPhoto) {
         this.onClickPhoto = onClickPhoto;
@@ -45,6 +52,10 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     public interface OnClickPhoto {
         void onClickPhoto(Datum datum);
+    }
+
+    public interface OnClickFavorite {
+        void onClickPhoto(int photoId);
     }
 
     @NonNull
@@ -104,11 +115,31 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
                     photoVIewHolder.likeCount.setText(String.valueOf(result.getLike()));
                     photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
+                    photoVIewHolder.favourite.setOnClickListener(l -> {
+                        if (isLoginUser){
+                            onClickFavorite.onClickPhoto(result.getId());
+                            if (result.getLikes()){
+                                photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart);
+                                result.setLikes(false);
+                            }
+                            else{
+                                photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart_filled);
+                                result.setLikes(true);
+                            }
+                        }else {
+                            Toast.makeText(context, "Please, login first.", Toast.LENGTH_SHORT).show();
+                        }
+
+                    });
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.ic_logo)
                             .error(R.drawable.ic_logo);
 
                     Glide.with(context).load(result.getImage()).apply(options).into(photoVIewHolder.image);
+                    if (result.getLikes())
+                        photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart_filled);
+                    else
+                        photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart);
 
                 }
                 break;
@@ -140,7 +171,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     //photo view holder
     class PhotoVIewHolder extends RecyclerView.ViewHolder {
         TextView photoTitle, photoType, likeCount;
-        ImageView image;
+        ImageView image, favourite;
         MaterialCardView seeDetails;
 
 
@@ -151,6 +182,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
             photoType = itemView.findViewById(R.id.photoType);
             seeDetails = itemView.findViewById(R.id.seeDetails);
             likeCount = itemView.findViewById(R.id.likeCount);
+            favourite = itemView.findViewById(R.id.favourite);
 
         }
     }

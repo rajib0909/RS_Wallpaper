@@ -3,11 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/drawable/ic_heart.xml" value="0.262" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/drawable/ic_heart_filled.xml" value="0.262" />
         <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/activity_login.xml" value="0.32916666666666666" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/activity_splash.xml" value="0.3625" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_category.xml" value="0.3625" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_category_photo.xml" value="0.3625" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_home.xml" value="0.275" />
         <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_photo_view.xml" value="0.3625" />
         <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_trending.xml" value="0.234375" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/fragment_upload_image.xml" value="0.3625" />
         <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/item_native_ad.xml" value="0.3625" />
         <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/layout/item_photo_list.xml" value="0.3625" />
+        <entry key="..\:/Android Project/RS_Wallpaper/app/src/main/res/menu/bottom_nav_menu.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_bell.xml" value="0.265" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_heart_filled.xml" value="0.2265" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/drawable/ic_logo.xml" value="0.2015" />
@@ -56,7 +64,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -6,13 +6,17 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -38,6 +42,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.rsdesign.wallpaper.R;
+import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
 
     private AdView bannerAdView;
+    private ViewModel viewModel;
+    private LottieAnimationView loading;
 
 
     @Override
@@ -64,10 +71,11 @@ public class LoginActivity extends AppCompatActivity {
 
         preferences = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = preferences.edit();
-
+        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
         MaterialButton fbButton = findViewById(R.id.btn_facebook);
         MaterialButton googleButton = findViewById(R.id.btn_google);
         bannerAdView = findViewById(R.id.adView);
+        loading = findViewById(R.id.loading);
 
         AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
@@ -107,19 +115,18 @@ public class LoginActivity extends AppCompatActivity {
                                         // Application code
                                         try {
                                             Map<String, String> accountMap = new HashMap<>();
-                                            accountMap.put("uid", object.getString("id"));
+                                            accountMap.put("media_key", object.getString("id"));
                                             accountMap.put("name", object.getString("name"));
-                                            accountMap.put("provider", "facebook");
-                                            String imageUrl = "https://graph.facebook.com/" + object.getString("id")+ "/picture?return_ssl_resources=1";
+                                            accountMap.put("media", "facebook");
+                                           // String imageUrl = "https://graph.facebook.com/" + object.getString("id")+ "/picture?return_ssl_resources=1";
                                         //    String url = object.getJSONObject("picture").getJSONObject("data").getString("url");
                                             editor.putString("userName", object.getString("name"));
                                             editor.putString("provider", "facebook");
-                                            editor.putBoolean("isLogin", true);
                                             editor.commit();
-                                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                                            finishAffinity();
-                                           // socialLogin(accountMap);
-                                            Log.d("fbid", object.getString("id"));
+                                            loading.setVisibility(View.VISIBLE);
+                                            viewModel.userLogin(accountMap);
+                                            observerLoginViewModel();
+                                            Log.d("fbId", object.getString("id"));
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -144,7 +151,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         fbButton.setOnClickListener(l -> {
-
             LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
         });
 
@@ -182,22 +188,52 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void observerLoginViewModel() {
+        viewModel.loginResponseMutableLiveData.observe(
+                this,
+                loginResponse -> {
+                    loading.setVisibility(View.GONE);
+                    if (loginResponse.getSuccess()) {
+                        editor.putBoolean("isLogin", true);
+                        editor.putString("token", "Bearer " + loginResponse.getData().getToken());
+                        editor.putInt("userId", loginResponse.getData().getUser().getId());
+                        editor.commit();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finishAffinity();
+                    }else {
+                        Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    }
+
+                    viewModel.loginResponseMutableLiveData = new MutableLiveData<>();
+                }
+        );
+        viewModel.loginLoadError.observe(
+                this, isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                            loading.setVisibility(View.GONE);
+                        }
+                        viewModel.loginLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+    }
+
+
     private void handleResult(Task<GoogleSignInAccount> task) {
         task.addOnSuccessListener(googleSignInAccount -> {
             Map<String, String> accountMap = new HashMap<>();
-            accountMap.put("uid", googleSignInAccount.getId());
+            accountMap.put("media_key", googleSignInAccount.getId());
             accountMap.put("email", googleSignInAccount.getEmail());
             accountMap.put("name", googleSignInAccount.getDisplayName());
-            accountMap.put("provider", "google");
+            accountMap.put("media", "google");
             editor.putString("userName", googleSignInAccount.getDisplayName());
             editor.putString("provider", "google");
-            editor.putBoolean("isLogin", true);
             editor.commit();
+            viewModel.userLogin(accountMap);
+            observerLoginViewModel();
 
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finishAffinity();
-
-           // socialLogin(accountMap);
         }).addOnFailureListener(e -> {
             Toast.makeText(LoginActivity.this, "Failed", Toast.LENGTH_SHORT).show();
         });

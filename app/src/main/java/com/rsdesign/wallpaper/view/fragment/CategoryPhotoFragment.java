@@ -1,35 +1,36 @@
 package com.rsdesign.wallpaper.view.fragment;
-
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.rsdesign.wallpaper.util.utils.categoryId;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
-
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentCategoryPhotoBinding;
-import com.rsdesign.wallpaper.model.Result;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
+import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
@@ -46,6 +47,9 @@ public class CategoryPhotoFragment extends Fragment {
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     private ViewModel viewModel;
+    private String token = "";
+    private String userId = "";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,19 +64,29 @@ public class CategoryPhotoFragment extends Fragment {
         editor = preferences.edit();
 
         isLogin = preferences.getBoolean("isLogin", false);
-
-        viewModel.categoryWallpaper(String.valueOf(categoryId));
-
-
-
+        token = preferences.getString("token", "");
+        userId = String.valueOf(preferences.getInt("userId", 0));
         photoResults = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            Result result = new Result();
-            result.setTitle("test");
-            photoResults.add(result);
-        }
 
-        addBannerAds();
+        categoryPhotoBinding.uploadImageButton.setOnClickListener(l -> {
+            if (isLogin) {
+                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                navController.navigate(R.id.navigation_upload_image);
+            } else {
+                new MaterialAlertDialogBuilder(getContext())
+                        .setTitle("Alert")
+                        .setMessage("Please, Login first!")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(getActivity(), LoginActivity.class));
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+
+        });
 
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
@@ -93,12 +107,20 @@ public class CategoryPhotoFragment extends Fragment {
         categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
         categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
+        categoryPhotoBinding.loading.setVisibility(View.VISIBLE);
+        if (isLogin) {
+            viewModel.categoryWallpaper(String.valueOf(categoryId), userId);
+        }else
+            viewModel.categoryWallpaper(String.valueOf(categoryId));
+        observerCategoryWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
                                                   public void onClickPhoto(Datum datum) {
                                                       NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                                                      navController.navigate(R.id.navigation_view_photo);
+                                                      Bundle bundle = new Bundle();
+                                                      bundle.putSerializable("PhotoDetails", datum);
+                                                      navController.navigate(R.id.navigation_view_photo, bundle);
                                                   }
                                               }
         );
@@ -107,6 +129,34 @@ public class CategoryPhotoFragment extends Fragment {
         allPhotoAdapterWithAd.notifyDataSetChanged();
 
         return categoryPhotoBinding.getRoot();
+    }
+
+    private void observerCategoryWallpapersViewModel() {
+        viewModel.categoryWallpaperMutableLiveData.observe(
+                getViewLifecycleOwner(),
+                wallpaper -> {
+                    if (wallpaper.getSuccess()) {
+                        photoResults.addAll(wallpaper.getData());
+                        addBannerAds();
+                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                        allPhotoAdapterWithAd.notifyDataSetChanged();
+                        categoryPhotoBinding.loading.setVisibility(View.GONE);
+                    }
+
+                    viewModel.categoryWallpaperMutableLiveData = new MutableLiveData<>();
+                }
+        );
+        viewModel.categoryWallpaperLoadError.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            categoryPhotoBinding.loading.setVisibility(View.GONE);
+                        }
+                        viewModel.categoryWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
     }
 
     private void addBannerAds() {

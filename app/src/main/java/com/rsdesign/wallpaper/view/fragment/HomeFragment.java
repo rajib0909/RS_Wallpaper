@@ -47,6 +47,8 @@ public class HomeFragment extends Fragment {
     private boolean isLogin = false;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
+    private String token = "";
+    private String userId = "";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -62,6 +64,9 @@ public class HomeFragment extends Fragment {
         editor = preferences.edit();
 
         isLogin = preferences.getBoolean("isLogin", false);
+        token = preferences.getString("token", "");
+        userId = String.valueOf(preferences.getInt("userId", 0));
+        utils.isLoginUser = isLogin;
 
 
         photoResults = new ArrayList<>();
@@ -85,7 +90,14 @@ public class HomeFragment extends Fragment {
         homeBinding.photoList.setLayoutManager(layoutManager);
         homeBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
-        viewModel.allWallpaper();
+        homeBinding.loading.setVisibility(View.VISIBLE);
+
+
+        if (isLogin) {
+            viewModel.allWallpaper(token, userId);
+        } else
+            viewModel.allWallpaper();
+
         observerAllWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
@@ -99,6 +111,13 @@ public class HomeFragment extends Fragment {
                                                   }
                                               }
         );
+
+        allPhotoAdapterWithAd.setOnClickFavorite(new ShowAllPhotoAdapterWithAd.OnClickFavorite() {
+            @Override
+            public void onClickPhoto(int photoId) {
+                viewModel.likeWallpaper(token, String.valueOf(photoId));
+            }
+        });
 
 
         homeBinding.uploadImageButton.setOnClickListener(l -> {
@@ -134,6 +153,7 @@ public class HomeFragment extends Fragment {
                         addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
+                        homeBinding.loading.setVisibility(View.GONE);
                     }
 
                     viewModel.allWallpaperMutableLiveData = new MutableLiveData<>();
@@ -142,8 +162,10 @@ public class HomeFragment extends Fragment {
         viewModel.allWallpaperLoadError.observe(
                 getViewLifecycleOwner(), isError -> {
                     if (isError != null) {
-                        if (isError)
+                        if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            homeBinding.loading.setVisibility(View.GONE);
+                        }
                         viewModel.allWallpaperLoadError = new MutableLiveData<>();
                     }
                 }

@@ -121,7 +121,7 @@
 
                 <ImageView
                     android:id="@+id/btnArrow"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_arrow_up" />
@@ -341,7 +341,7 @@
 
 
                         <ImageView
-                            android:id="@+id/btnUnfollow"
+                            android:id="@+id/btnFollow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
@@ -353,7 +353,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:layout_toLeftOf="@+id/btnUnfollow"
+                            android:layout_toLeftOf="@+id/btnFollow"
                             android:gravity="center"
                             android:orientation="vertical">
 
