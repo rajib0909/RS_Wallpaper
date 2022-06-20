@@ -6,10 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -57,6 +57,7 @@ public class SearchWallpaperFragment extends Fragment {
     private String token = "";
     private String userId = "";
     private String searchTag = "";
+    private boolean clearText = false;
 
 
     @Override
@@ -66,7 +67,7 @@ public class SearchWallpaperFragment extends Fragment {
         searchWallpaperBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_wallpaper, container, false);
         setHasOptionsMenu(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        // searchWallpaperBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
+         searchWallpaperBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
 
         preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -143,11 +144,21 @@ public class SearchWallpaperFragment extends Fragment {
 
 
         searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
-        if (isLogin) {
-            viewModel.searchWallpaper(token, userId, searchTag);
-        } else
-            viewModel.searchWallpaper(searchTag);
-        observerSearchWallpapersViewModel();
+        if (!clearText){
+            if (isLogin) {
+                viewModel.searchWallpaper(token, userId, searchTag);
+            } else
+                viewModel.searchWallpaper(searchTag);
+            observerSearchWallpapersViewModel();
+        }else {
+            if (isLogin) {
+                viewModel.allWallpaper(token, userId);
+            } else
+                viewModel.allWallpaper();
+
+            observerAllWallpapersViewModel();
+        }
+
 
 
         return searchWallpaperBinding.getRoot();
@@ -159,11 +170,17 @@ public class SearchWallpaperFragment extends Fragment {
                 getViewLifecycleOwner(),
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
-                        photoResults.addAll(allWallpaper.getData());
-                        addBannerAds();
-                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-                        allPhotoAdapterWithAd.notifyDataSetChanged();
                         searchWallpaperBinding.loading.setVisibility(View.GONE);
+                        if (allWallpaper.getData().size()!=0){
+                            searchWallpaperBinding.notFound.setVisibility(View.GONE);
+                            photoResults.addAll(allWallpaper.getData());
+                            addBannerAds();
+                            allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                            allPhotoAdapterWithAd.notifyDataSetChanged();
+                        }else {
+                            searchWallpaperBinding.notFound.setVisibility(View.VISIBLE);
+                        }
+
                     }
 
                     viewModel.searchWallpaperMutableLiveData = new MutableLiveData<>();
@@ -173,6 +190,7 @@ public class SearchWallpaperFragment extends Fragment {
                 getViewLifecycleOwner(), isError -> {
                     if (isError != null) {
                         if (isError) {
+                            searchWallpaperBinding.notFound.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             searchWallpaperBinding.loading.setVisibility(View.GONE);
                         }
@@ -183,6 +201,7 @@ public class SearchWallpaperFragment extends Fragment {
     }
 
     private void observerAllWallpapersViewModel() {
+        searchWallpaperBinding.notFound.setVisibility(View.GONE);
         viewModel.allWallpaperMutableLiveData.observe(
                 getViewLifecycleOwner(),
                 allWallpaper -> {
@@ -264,25 +283,28 @@ public class SearchWallpaperFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
 
         inflater.inflate(R.menu.action_menu, menu);
-        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.btn_search).getActionView();
+       SearchView searchView = (SearchView) menu.findItem(R.id.btn_search).getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setQueryHint("Search wallpaper...");
         searchView.setIconified(false);
 
-        if (searchTag.length()!= 0){
+        if (searchTag.length()!= 0 && !clearText){
             MenuItem sItem = menu.findItem(R.id.btn_search);
             sItem.expandActionView();
             searchView.setQuery(searchTag , false);
+            searchView.clearFocus();
         }
 
 
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                clearText = false;
                 searchTag = searchView.getQuery().toString();
                 searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
                 allPhotoAdapterWithAd.clearPhotoList();
                 photoResults.clear();
+                allPhotoAdapterWithAd.notifyDataSetChanged();
                 if (isLogin) {
                     viewModel.searchWallpaper(token, userId, searchTag);
                 } else
@@ -298,6 +320,31 @@ public class SearchWallpaperFragment extends Fragment {
 
         });
 
+        MenuItem item = menu.findItem(R.id.btn_search);
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                if (!searchView.getQuery().toString().isEmpty()){
+                    searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
+                    allPhotoAdapterWithAd.clearPhotoList();
+                    photoResults.clear();
+                    allPhotoAdapterWithAd.notifyDataSetChanged();
+                    clearText = true;
+                    if (isLogin) {
+                        viewModel.allWallpaper(token, userId);
+                    } else
+                        viewModel.allWallpaper();
+                    observerAllWallpapersViewModel();
+                }
+                return true;
+            }
+        });
+
         ImageView clearButton = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         clearButton.setOnClickListener(v -> {
             if (searchView.getQuery().length() == 0) {
@@ -310,6 +357,8 @@ public class SearchWallpaperFragment extends Fragment {
             searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
             allPhotoAdapterWithAd.clearPhotoList();
             photoResults.clear();
+            allPhotoAdapterWithAd.notifyDataSetChanged();
+            clearText = true;
             if (isLogin) {
                 viewModel.allWallpaper(token, userId);
             } else
