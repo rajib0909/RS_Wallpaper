@@ -294,8 +294,7 @@ public class SearchWallpaperFragment extends Fragment {
             searchView.setQuery(searchTag , false);
             searchView.clearFocus();
         }
-
-
+        
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
