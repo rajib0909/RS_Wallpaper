@@ -125,6 +125,13 @@ public class CategoryPhotoFragment extends Fragment {
                                               }
         );
 
+        allPhotoAdapterWithAd.setOnClickFavorite(new ShowAllPhotoAdapterWithAd.OnClickFavorite() {
+            @Override
+            public void onClickPhoto(int photoId) {
+                viewModel.likeWallpaper(token, String.valueOf(photoId));
+            }
+        });
+
         allPhotoAdapterWithAd.updatePhotoList(photoResults);
         allPhotoAdapterWithAd.notifyDataSetChanged();
 

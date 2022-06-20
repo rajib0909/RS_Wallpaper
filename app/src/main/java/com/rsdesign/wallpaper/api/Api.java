@@ -7,6 +7,7 @@ import com.rsdesign.wallpaper.model.followUser.FollowUserResponse;
 import com.rsdesign.wallpaper.model.imageUpload.ImageUploadResponse;
 import com.rsdesign.wallpaper.model.likePhoto.PhotoLikeResponse;
 import com.rsdesign.wallpaper.model.login.LoginResponse;
+import com.rsdesign.wallpaper.model.userProfile.UserProfileResponse;
 import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.util.Map;
@@ -91,6 +92,13 @@ public interface Api {
     Single<FollowUserResponse> followUserWallpaper(
             @Header("Authorization") String token,
             @Body Map<String, String> value
+    );
+
+
+    @Headers({"Accept: application/json"})
+    @GET("user/wallpaper")
+    Single<UserProfileResponse> userProfile(
+            @Header("Authorization") String token
     );
 
 

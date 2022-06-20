@@ -9,6 +9,7 @@ import com.rsdesign.wallpaper.model.followUser.FollowUserResponse;
 import com.rsdesign.wallpaper.model.imageUpload.ImageUploadResponse;
 import com.rsdesign.wallpaper.model.likePhoto.PhotoLikeResponse;
 import com.rsdesign.wallpaper.model.login.LoginResponse;
+import com.rsdesign.wallpaper.model.userProfile.UserProfileResponse;
 import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<PhotoLikeResponse> photoLikeMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<FollowUserResponse> followUserMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ImageUploadResponse> imageUploadMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<UserProfileResponse> userProfileMutableLiveData = new MutableLiveData<>();
 
 
 
@@ -54,6 +56,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<Boolean> photoLikeLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> followUserLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageUploadLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> userProfileLoadError = new MutableLiveData<>();
 
 
 
@@ -265,6 +268,27 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             @Override
                             public void onError(@NonNull Throwable e) {
                                 photoLikeLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+
+    public void userProfile(String token) {
+        disposable.add(
+                networkService.userProfile(token)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<UserProfileResponse>() {
+                            @Override
+                            public void onSuccess(@NonNull UserProfileResponse profile) {
+                                userProfileMutableLiveData.setValue(profile);
+                                userProfileLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                userProfileLoadError.setValue(true);
                             }
                         })
         );

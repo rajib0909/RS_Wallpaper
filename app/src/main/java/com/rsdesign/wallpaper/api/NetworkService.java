@@ -7,6 +7,7 @@ import com.rsdesign.wallpaper.model.followUser.FollowUserResponse;
 import com.rsdesign.wallpaper.model.imageUpload.ImageUploadResponse;
 import com.rsdesign.wallpaper.model.likePhoto.PhotoLikeResponse;
 import com.rsdesign.wallpaper.model.login.LoginResponse;
+import com.rsdesign.wallpaper.model.userProfile.UserProfileResponse;
 import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.util.Map;
@@ -81,6 +82,10 @@ public class NetworkService {
 
     public Single<PhotoLikeResponse> likeWallpaper(String token, String id) {
         return api.likeWallpaper(token, id);
+    }
+
+    public Single<UserProfileResponse> userProfile(String token) {
+        return api.userProfile(token);
     }
 
     public Single<FollowUserResponse> followUserWallpaper(String token, Map<String, String> value) {
