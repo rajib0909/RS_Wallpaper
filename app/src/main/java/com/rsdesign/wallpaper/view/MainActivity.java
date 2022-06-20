@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.ActivityMainBinding;
+import com.rsdesign.wallpaper.util.utils;
 
 public class MainActivity extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
@@ -68,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         userName = preferences.getString("userName", "User Name");
         provider = preferences.getString("provider", "");
         isLogin = preferences.getBoolean("isLogin", false);
+
+        if (!isLogin)
+            mainBinding.btnProfile.setVisibility(View.GONE);
 
 
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -163,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
             mainBinding.userName.setText("Hey");
             mainBinding.btnLogin.setVisibility(View.VISIBLE);
             mainBinding.btnLogout.setVisibility(View.GONE);
+            Intent mIntent = getIntent();
+            finish();
+            startActivity(mIntent);
         });
 
         noButton.setOnClickListener(l -> alertDialog.cancel());
@@ -269,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.action_menu, menu);
@@ -278,12 +285,32 @@ public class MainActivity extends AppCompatActivity {
         searchView.setQueryHint("Search wallpaper...");
         searchView.setIconified(false);
 
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                //utils.searchJobString = searchView.getQuery().toString();
+
+                NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
+                Bundle bundle = new Bundle();
+                bundle.putString("searchString", searchView.getQuery().toString());
+                navController.navigate(R.id.navigation_search_wallpaper, bundle);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
 
        // menu.findItem(R.id.btn_bell).setVisible(false);
         return true;
     }
 
-
+*/
 
 
     /**

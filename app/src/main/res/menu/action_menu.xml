@@ -6,11 +6,11 @@
         android:id="@+id/btn_search"
         android:icon="@drawable/ic_search"
         android:title="@string/search"
-        app:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
     <item
         android:id="@+id/btn_bell"
         android:icon="@drawable/ic_bell"
         android:title="Bell"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

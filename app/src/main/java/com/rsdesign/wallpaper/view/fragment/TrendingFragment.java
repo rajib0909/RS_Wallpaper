@@ -10,14 +10,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -40,7 +44,6 @@ import java.util.List;
 public class TrendingFragment extends Fragment {
 
     FragmentTrendingBinding trendingBinding;
-
     private List<Object> photoResults;
     private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
     private boolean isLogin = false;
@@ -49,13 +52,15 @@ public class TrendingFragment extends Fragment {
     private ViewModel viewModel;
     private String token = "";
     private String userId = "";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         trendingBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_trending, container, false);
-        trendingBinding.btnBack.setOnClickListener(l-> getActivity().onBackPressed());
+        trendingBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+        setHasOptionsMenu(true);
 
         preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = preferences.edit();
@@ -83,17 +88,7 @@ public class TrendingFragment extends Fragment {
             }
 
         });
-
-
         photoResults = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            Result result = new Result();
-            result.setTitle("test");
-            photoResults.add(result);
-        }
-
-        addBannerAds();
-
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
@@ -113,20 +108,64 @@ public class TrendingFragment extends Fragment {
         trendingBinding.trendingPostList.setLayoutManager(layoutManager);
         trendingBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
-
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
                                                   public void onClickPhoto(Datum datum) {
                                                       NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                                                      navController.navigate(R.id.navigation_view_photo);
+                                                      Bundle bundle = new Bundle();
+                                                      bundle.putSerializable("PhotoDetails", datum);
+                                                      navController.navigate(R.id.navigation_view_photo, bundle);
+
                                                   }
                                               }
         );
+        allPhotoAdapterWithAd.setOnClickFavorite(new ShowAllPhotoAdapterWithAd.OnClickFavorite() {
+            @Override
+            public void onClickPhoto(int photoId) {
+                viewModel.likeWallpaper(token, String.valueOf(photoId));
+            }
+        });
 
-        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-        allPhotoAdapterWithAd.notifyDataSetChanged();
+
+        trendingBinding.loading.setVisibility(View.VISIBLE);
+        if (isLogin) {
+            viewModel.trendingWallpaper(token, userId);
+        } else
+            viewModel.trendingWallpaper();
+        observerTrendingWallpapersViewModel();
+
 
         return trendingBinding.getRoot();
+    }
+
+
+    private void observerTrendingWallpapersViewModel() {
+        viewModel.trendingWallpaperMutableLiveData.observe(
+                getViewLifecycleOwner(),
+                allWallpaper -> {
+                    if (allWallpaper.getSuccess()) {
+                        photoResults.addAll(allWallpaper.getData());
+                        addBannerAds();
+                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                        allPhotoAdapterWithAd.notifyDataSetChanged();
+                        trendingBinding.loading.setVisibility(View.GONE);
+                    }
+
+                    viewModel.trendingWallpaperMutableLiveData = new MutableLiveData<>();
+                }
+        );
+        viewModel.trendingWallpaperLoadError.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            trendingBinding.loading.setVisibility(View.GONE);
+                        }
+                        viewModel.trendingWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
     }
 
     private void addBannerAds() {
@@ -175,6 +214,36 @@ public class TrendingFragment extends Fragment {
 
         // Load the banner ad.
         adView.loadAd(new AdRequest.Builder().build());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.action_menu, menu);
+        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.btn_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("Search wallpaper...");
+        searchView.setIconified(false);
+
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //utils.searchJobString = searchView.getQuery().toString();
+                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                Bundle bundle = new Bundle();
+                bundle.putString("searchString", searchView.getQuery().toString());
+                navController.navigate(R.id.navigation_search_wallpaper, bundle);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 

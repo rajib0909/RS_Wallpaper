@@ -53,6 +53,11 @@
         android:label=""
         tools:layout="@layout/fragment_upload_image" />
 
+    <fragment
+        android:id="@+id/navigation_search_wallpaper"
+        android:name="com.rsdesign.wallpaper.view.fragment.SearchWallpaperFragment"
+        android:label=""
+        tools:layout="@layout/fragment_search_wallpaper" />
 
 
 </navigation>

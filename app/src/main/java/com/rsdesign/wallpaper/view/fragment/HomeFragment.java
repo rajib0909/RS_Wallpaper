@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ import com.rsdesign.wallpaper.databinding.FragmentHomeBinding;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.util.utils;
 import com.rsdesign.wallpaper.view.LoginActivity;
+import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
 import java.util.ArrayList;
@@ -57,7 +60,7 @@ public class HomeFragment extends Fragment {
 
         homeBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         // ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
+        setHasOptionsMenu(true);
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
 
         preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -91,6 +94,7 @@ public class HomeFragment extends Fragment {
         homeBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
         homeBinding.loading.setVisibility(View.VISIBLE);
+        homeBinding.scrollView.setVisibility(View.GONE);
 
 
         if (isLogin) {
@@ -154,6 +158,7 @@ public class HomeFragment extends Fragment {
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         homeBinding.loading.setVisibility(View.GONE);
+                        homeBinding.scrollView.setVisibility(View.VISIBLE);
                     }
 
                     viewModel.allWallpaperMutableLiveData = new MutableLiveData<>();
@@ -165,6 +170,7 @@ public class HomeFragment extends Fragment {
                         if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             homeBinding.loading.setVisibility(View.GONE);
+                            homeBinding.scrollView.setVisibility(View.VISIBLE);
                         }
                         viewModel.allWallpaperLoadError = new MutableLiveData<>();
                     }
@@ -219,6 +225,37 @@ public class HomeFragment extends Fragment {
 
         // Load the banner ad.
         adView.loadAd(new AdRequest.Builder().build());
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.action_menu, menu);
+        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) menu.findItem(R.id.btn_search).getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("Search wallpaper...");
+        searchView.setIconified(false);
+
+        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //utils.searchJobString = searchView.getQuery().toString();
+                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                Bundle bundle = new Bundle();
+                bundle.putString("searchString", searchView.getQuery().toString());
+                navController.navigate(R.id.navigation_search_wallpaper, bundle);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

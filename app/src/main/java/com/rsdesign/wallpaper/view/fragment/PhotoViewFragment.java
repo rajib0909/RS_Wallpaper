@@ -1,5 +1,6 @@
 package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
+import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -130,10 +131,10 @@ public class PhotoViewFragment extends Fragment {
                     }
                 });
 
-        photoViewBinding.viewCount.setText(String.valueOf(Integer.parseInt(data.getViewCount()) + 1));
-        photoViewBinding.downloadCount.setText(data.getDownload());
+        photoViewBinding.viewCount.setText(convertCount(Integer.parseInt(data.getViewCount())+ 1));
+        photoViewBinding.downloadCount.setText(convertCount(Integer.parseInt(data.getDownload())));
         photoViewBinding.uploaderName.setText(data.getUploader().getName().split(" ")[0]);
-        photoViewBinding.followerCount.setText(data.getUploader().getFollowers());
+        photoViewBinding.followerCount.setText(convertCount(Integer.parseInt(data.getUploader().getFollowers())));
         if (data.getLikes())
             photoViewBinding.favourite.setImageResource(R.drawable.ic_heart_filled);
         else
@@ -202,7 +203,7 @@ public class PhotoViewFragment extends Fragment {
                         }
                     });
                 } else {
-                    Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
                     Log.d("googleAd", "The rewarded ad wasn't ready yet.");
                 }
 

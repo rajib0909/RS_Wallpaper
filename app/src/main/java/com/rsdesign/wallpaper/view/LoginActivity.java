@@ -231,6 +231,7 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("userName", googleSignInAccount.getDisplayName());
             editor.putString("provider", "google");
             editor.commit();
+            loading.setVisibility(View.VISIBLE);
             viewModel.userLogin(accountMap);
             observerLoginViewModel();
 

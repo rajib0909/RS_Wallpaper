@@ -117,6 +117,7 @@ public class UploadImageFragment extends Fragment {
                 description = uploadImageBinding.etAbout.getText().toString();
             }
             uploadImageBinding.loading.setVisibility(View.VISIBLE);
+            uploadImageBinding.btnUploadNow.setEnabled(false);
             viewModel.wallpaperUpload(token, tags, String.valueOf(categoryId), wallpaperName, description, file);
             observerUploadWallpaperViewModel();
         });
@@ -135,6 +136,7 @@ public class UploadImageFragment extends Fragment {
                         uploadImageBinding.etTag.setText("");
                         uploadImageBinding.etAbout.setText("");
                         selectPhoto = false;
+                        uploadImageBinding.btnUploadNow.setEnabled(true);
                         uploadImageBinding.srcImage.setVisibility(View.GONE);
                         uploadImageBinding.loading.setVisibility(View.GONE);
                     }

@@ -56,6 +56,22 @@ public class NetworkService {
         return api.allWallpaper(token, userId);
     }
 
+    public Single<AllWallpaper> trendingWallpaper() {
+        return api.trendingWallpaper();
+    }
+
+    public Single<AllWallpaper> trendingWallpaper(String token, String userId) {
+        return api.trendingWallpaper(token, userId);
+    }
+
+    public Single<AllWallpaper> searchWallpaper(String tag) {
+        return api.searchWallpaper(tag);
+    }
+
+    public Single<AllWallpaper> searchWallpaper(String token, String userId, String tag) {
+        return api.searchWallpaper(token, userId, tag);
+    }
+
     public Single<CategoryList> allCategory() {
         return api.allCategory();
     }

@@ -190,6 +190,32 @@
                     android:padding="16dp" />
 
 
+                <LinearLayout
+                    android:id="@+id/notFound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_marginTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="18sp"
+                        android:textFontWeight="500"
+                        android:textColor="@color/textColor"
+                        android:text="@string/no_image_upload_by_you"/>
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:layout_gravity="center"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/not_found" />
+                </LinearLayout>
+
+
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
@@ -206,7 +232,7 @@
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floating_action_button"
+            android:id="@+id/uploadImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

@@ -34,7 +34,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
 
     public MutableLiveData<LoginResponse> loginResponseMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<AllWallpaper> allWallpaperMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<AllWallpaper> trendingWallpaperMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<AllWallpaper> categoryWallpaperMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<AllWallpaper> searchWallpaperMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ViewCount> viewCountMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<CategoryList> categoryListMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<PhotoLikeResponse> photoLikeMutableLiveData = new MutableLiveData<>();
@@ -50,7 +52,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
      */
     public MutableLiveData<Boolean> loginLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> allWallpaperLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> trendingWallpaperLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> categoryWallpaperLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> searchWallpaperLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> viewCountLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> categoryListLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> photoLikeLoadError = new MutableLiveData<>();
@@ -128,6 +132,88 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             @Override
                             public void onError(@NonNull Throwable e) {
                                 allWallpaperLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+
+    public void trendingWallpaper() {
+        disposable.add(
+                networkService.trendingWallpaper()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
+                            @Override
+                            public void onSuccess(@NonNull AllWallpaper allWallpaper) {
+                                trendingWallpaperMutableLiveData.setValue(allWallpaper);
+                                trendingWallpaperLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                trendingWallpaperLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+    public void trendingWallpaper(String token, String userId) {
+        disposable.add(
+                networkService.trendingWallpaper(token, userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
+                            @Override
+                            public void onSuccess(@NonNull AllWallpaper allWallpaper) {
+                                trendingWallpaperMutableLiveData.setValue(allWallpaper);
+                                trendingWallpaperLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                trendingWallpaperLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+
+    public void searchWallpaper(String tag) {
+        disposable.add(
+                networkService.searchWallpaper(tag)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
+                            @Override
+                            public void onSuccess(@NonNull AllWallpaper allWallpaper) {
+                                searchWallpaperMutableLiveData.setValue(allWallpaper);
+                                searchWallpaperLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                searchWallpaperLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+    public void searchWallpaper(String token, String userId, String tag) {
+        disposable.add(
+                networkService.searchWallpaper(token, userId, tag)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
+                            @Override
+                            public void onSuccess(@NonNull AllWallpaper allWallpaper) {
+                                searchWallpaperMutableLiveData.setValue(allWallpaper);
+                                searchWallpaperLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                searchWallpaperLoadError.setValue(true);
                             }
                         })
         );

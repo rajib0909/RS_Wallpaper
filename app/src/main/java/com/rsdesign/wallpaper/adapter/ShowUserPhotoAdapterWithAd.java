@@ -1,7 +1,6 @@
 package com.rsdesign.wallpaper.adapter;
 
 import static com.rsdesign.wallpaper.util.utils.convertCount;
-import static com.rsdesign.wallpaper.util.utils.isLoginUser;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,30 +17,26 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.card.MaterialCardView;
 import com.rsdesign.wallpaper.R;
-import com.rsdesign.wallpaper.model.allWallpaper.Datum;
+import com.rsdesign.wallpaper.model.userProfile.Wallpaper;
 import com.rsdesign.wallpaper.util.utils;
 
 import java.util.List;
 
-public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ShowUserPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_TYPE_PHOTO = 978;
     private static final int ITEM_TYPE_BANNER_AD = 979;
     private List<Object> allResultList;
     private Context context;
 
     public OnClickPhoto onClickPhoto;
-    public OnClickFavorite onClickFavorite;
 
-    public void setOnClickFavorite(OnClickFavorite onClickFavorite) {
-        this.onClickFavorite = onClickFavorite;
-    }
 
-    public void setOnClickPhoto(ShowAllPhotoAdapterWithAd.OnClickPhoto onClickPhoto) {
+    public void setOnClickPhoto(ShowUserPhotoAdapterWithAd.OnClickPhoto onClickPhoto) {
         this.onClickPhoto = onClickPhoto;
     }
 
 
-    public ShowAllPhotoAdapterWithAd(List<Object> allResultList, Context context) {
+    public ShowUserPhotoAdapterWithAd(List<Object> allResultList, Context context) {
         this.allResultList = allResultList;
         this.context = context;
     }
@@ -51,17 +45,11 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
         this.allResultList.addAll(allResultList);
     }
 
-    public void clearPhotoList() {
-        this.allResultList.clear();
-    }
-
     public interface OnClickPhoto {
-        void onClickPhoto(Datum datum);
+        void onClickPhoto(Wallpaper datum);
     }
 
-    public interface OnClickFavorite {
-        void onClickPhoto(int photoId);
-    }
+
 
     @NonNull
     @Override
@@ -111,40 +99,21 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                 break;
             case ITEM_TYPE_PHOTO:
             default:
-                if (allResultList.get(position) instanceof Datum) {
+                if (allResultList.get(position) instanceof Wallpaper) {
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
-                    Datum result = (Datum) allResultList.get(position);
+                    Wallpaper result = (Wallpaper) allResultList.get(position);
 
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
                     photoVIewHolder.likeCount.setText(convertCount(Integer.parseInt(result.getLike())));
-                    photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
-                    photoVIewHolder.favourite.setOnClickListener(l -> {
-                        if (isLoginUser){
-                            onClickFavorite.onClickPhoto(result.getId());
-                            if (result.getLikes()){
-                                photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart);
-                                result.setLikes(false);
-                            }
-                            else{
-                                photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart_filled);
-                                result.setLikes(true);
-                            }
-                        }else {
-                            Toast.makeText(context, "Please, login first.", Toast.LENGTH_SHORT).show();
-                        }
+                  //  photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
 
-                    });
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.ic_logo)
                             .error(R.drawable.ic_logo);
 
                     Glide.with(context).load(result.getImage()).apply(options).into(photoVIewHolder.image);
-                    if (result.getLikes())
-                        photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart_filled);
-                    else
-                        photoVIewHolder.favourite.setImageResource(R.drawable.ic_heart);
 
                 }
                 break;
@@ -163,7 +132,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 || allResultList.get(position) instanceof Datum) {
+        if (position == 0 || allResultList.get(position) instanceof Wallpaper) {
             return ITEM_TYPE_PHOTO;
         } else {
             if (position % utils.AD_PER_PHOTO == 0) {
