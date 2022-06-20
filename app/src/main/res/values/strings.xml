@@ -66,5 +66,6 @@
     <string name="no_image_upload_by_you">No wallpaper upload by you</string>
     <string name="search_wallpaper">Search Wallpaper</string>
     <string name="no_wallpaper_found">No wallpaper found</string>
+    <string name="wallpaper">Wallpaper</string>
 
 </resources>

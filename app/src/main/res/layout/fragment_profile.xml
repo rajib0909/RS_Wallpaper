@@ -107,7 +107,7 @@
 
 
                             <TextView
-                                android:id="@+id/downloadCount"
+                                android:id="@+id/wallpaperCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="10K"
@@ -119,7 +119,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp"
-                                android:text="@string/download"
+                                android:text="@string/wallpaper"
                                 android:textColor="@color/white_light"
                                 android:textSize="12sp"
                                 android:textStyle="italic" />

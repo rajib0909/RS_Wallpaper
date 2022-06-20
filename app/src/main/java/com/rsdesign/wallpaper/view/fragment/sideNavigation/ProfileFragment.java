@@ -115,6 +115,8 @@ public class ProfileFragment extends Fragment {
                         profileBinding.scrollView.setVisibility(View.VISIBLE);
                         profileBinding.userName.setText(profileResponse.getData().getName());
                         profileBinding.followingCount.setText(convertCount(Integer.parseInt(profileResponse.getData().getFollowers())));
+                        profileBinding.wallpaperCount.setText(convertCount(profileResponse.getData().getWallpapers().size()));
+
                         if (profileResponse.getData().getWallpapers().size() != 0){
                             photoResults.addAll(profileResponse.getData().getWallpapers());
                             addBannerAds();

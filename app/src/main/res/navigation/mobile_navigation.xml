@@ -59,5 +59,11 @@
         android:label=""
         tools:layout="@layout/fragment_search_wallpaper" />
 
+    <fragment
+        android:id="@+id/navigation_view_photo_user"
+        android:name="com.rsdesign.wallpaper.view.fragment.sideNavigation.UserPhotoViewFragment"
+        android:label=""
+        tools:layout="@layout/fragment_user_photo_view" />
+
 
 </navigation>
