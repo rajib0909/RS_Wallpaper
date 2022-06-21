@@ -67,5 +67,7 @@
     <string name="search_wallpaper">Search Wallpaper</string>
     <string name="no_wallpaper_found">No wallpaper found</string>
     <string name="wallpaper">Wallpaper</string>
+    <string name="admin">Admin</string>
+    <string name="admin_panel">Admin Panel</string>
 
 </resources>

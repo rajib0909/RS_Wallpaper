@@ -1,5 +1,6 @@
 package com.rsdesign.wallpaper.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.rsdesign.wallpaper.R;
+import com.rsdesign.wallpaper.databinding.ItemAdminPhotoListBinding;
 import com.rsdesign.wallpaper.databinding.ItemPhotoListBinding;
-import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 
 import java.util.List;
 import java.util.Random;
 
 public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapter.ViewHolder> {
-    private List<Result> allResultList;
+    private List<Datum> allResultList;
     private Context context;
-    private int lastPosition = -1;
     public OnClickPhoto onClickPhoto;
 
 
@@ -32,7 +35,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     }
 
 
-    public ShowAllPhotoAdapter(List<Result> allResultList, Context context) {
+    public ShowAllPhotoAdapter(List<Datum> allResultList, Context context) {
         this.allResultList = allResultList;
         this.context = context;
     }
@@ -43,7 +46,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     }
 
 
-    public void updatePhotoList(List<Result> allResultList) {
+    public void updatePhotoList(List<Datum> allResultList) {
         this.allResultList.addAll(allResultList);
     }
 
@@ -56,8 +59,8 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        ItemPhotoListBinding photoListBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(parent.getContext()), R.layout.item_photo_list, parent, false);
+        ItemAdminPhotoListBinding photoListBinding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.getContext()), R.layout.item_admin_photo_list, parent, false);
 
         return new ViewHolder(photoListBinding.getRoot(), photoListBinding);
     }
@@ -66,7 +69,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Result datum = allResultList.get(position);
+        Datum datum = allResultList.get(position);
         holder.bind(datum);
 
     }
@@ -82,22 +85,25 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ItemPhotoListBinding photoListBinding;
+        private final ItemAdminPhotoListBinding photoListBinding;
 
-        public ViewHolder(@NonNull View itemView, ItemPhotoListBinding photoListBinding) {
+        public ViewHolder(@NonNull View itemView, ItemAdminPhotoListBinding photoListBinding) {
             super(itemView);
             this.photoListBinding = photoListBinding;
         }
 
-        public void bind(Result datum) {
+        @SuppressLint("SetTextI18n")
+        public void bind(Datum datum) {
 
-          /*  RequestOptions options = new RequestOptions()
-                    .placeholder(R.drawable.bongo)
-                    .error(R.drawable.bongo);
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.ic_logo)
+                    .error(R.drawable.ic_logo);
 
-            Glide.with(context).load("https://image.tmdb.org/t/p/original" + datum.getPosterPath()).apply(options).into(allTopRatedMovieBinding.posterImage);
-*/
-            photoListBinding.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
+            Glide.with(context).load(datum.getImage()).apply(options).into(photoListBinding.image);
+            photoListBinding.tag.setText(datum.getTags());
+            photoListBinding.category.setText(datum.getCategories().get(0).getName());
+            photoListBinding.reportCount.setText("DMCA report ("+ datum.getCopyrightReport()+")");
+           // photoListBinding.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
 
             photoListBinding.executePendingBindings();
 

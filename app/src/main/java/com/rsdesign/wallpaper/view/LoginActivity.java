@@ -197,6 +197,7 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putBoolean("isLogin", true);
                         editor.putString("token", "Bearer " + loginResponse.getData().getToken());
                         editor.putInt("userId", loginResponse.getData().getUser().getId());
+                        editor.putString("userRole", loginResponse.getData().getUser().getRole());
                         editor.commit();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finishAffinity();

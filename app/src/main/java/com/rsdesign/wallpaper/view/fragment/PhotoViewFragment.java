@@ -286,6 +286,14 @@ public class PhotoViewFragment extends Fragment {
 
         });
 
+        photoViewBinding.btnShare.setOnClickListener(l -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            String shareBody = data.getImage();
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+        });
 
         return photoViewBinding.getRoot();
     }

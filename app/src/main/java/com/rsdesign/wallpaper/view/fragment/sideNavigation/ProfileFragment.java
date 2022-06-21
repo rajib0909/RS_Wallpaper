@@ -37,6 +37,7 @@ import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapter;
 import com.rsdesign.wallpaper.adapter.ShowUserPhotoAdapterWithAd;
 import com.rsdesign.wallpaper.databinding.FragmentProfileBinding;
 import com.rsdesign.wallpaper.model.Result;
+import com.rsdesign.wallpaper.model.userProfile.Wallpaper;
 import com.rsdesign.wallpaper.util.utils;
 import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.view.MainActivity;
@@ -101,6 +102,16 @@ public class ProfileFragment extends Fragment {
             NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
             navController.navigate(R.id.navigation_upload_image);
 
+        });
+
+        userPhotoAdapterWithAd.setOnClickPhoto(new ShowUserPhotoAdapterWithAd.OnClickPhoto() {
+            @Override
+            public void onClickPhoto(Wallpaper datum) {
+                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("PhotoDetails", datum);
+                navController.navigate(R.id.navigation_view_photo_user, bundle);
+            }
         });
 
         return profileBinding.getRoot();

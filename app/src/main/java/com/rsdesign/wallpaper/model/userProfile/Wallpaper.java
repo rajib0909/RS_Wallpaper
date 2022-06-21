@@ -1,11 +1,12 @@
 
 package com.rsdesign.wallpaper.model.userProfile;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Wallpaper {
+public class Wallpaper implements Serializable {
 
     @SerializedName("id")
     @Expose

@@ -33,6 +33,7 @@
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/activity_splash.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/dialog.xml" value="0.33" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/dialog_log_out.xml" value="0.33" />
+        <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_admin_all_photo.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_category.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_category_photo.xml" value="0.2630208333333333" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_home.xml" value="0.2630208333333333" />
@@ -41,6 +42,8 @@
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_search_wallpaper.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_trending.xml" value="0.1287037037037037" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_upload_image.xml" value="0.25" />
+        <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/fragment_user_photo_view.xml" value="0.29739583333333336" />
+        <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/item_admin_photo_list.xml" value="0.25" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/item_photo_category.xml" value="0.3625" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/item_photo_list.xml" value="0.25" />
         <entry key="..\:/Android project/RS_Wallpaper/app/src/main/res/layout/nav_header_main.xml" value="0.33" />
@@ -71,7 +74,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

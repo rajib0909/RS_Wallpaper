@@ -234,6 +234,16 @@
                         android:textColor="@color/white_light"
                         android:textSize="16sp" />
 
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/btnAdmin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:text="@string/admin"
+                        android:textColor="@color/white_light"
+                        android:textSize="16sp" />
+
 
                     <TextView
                         android:layout_marginTop="38dp"

@@ -107,7 +107,7 @@ public class ShowUserPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerVie
                     photoVIewHolder.photoTitle.setText(result.getTitle());
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());
                     photoVIewHolder.likeCount.setText(convertCount(Integer.parseInt(result.getLike())));
-                  //  photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
+                    photoVIewHolder.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(result));
 
                     RequestOptions options = new RequestOptions()
                             .placeholder(R.drawable.ic_logo)

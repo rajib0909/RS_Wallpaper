@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
 
-    private String userName, provider;
+    private String userName, provider, userRole;
     private boolean isLogin = false;
     private RewardedAd mRewardedAd;
 
@@ -68,11 +68,13 @@ public class MainActivity extends AppCompatActivity {
 
         userName = preferences.getString("userName", "User Name");
         provider = preferences.getString("provider", "");
+        userRole = preferences.getString("userRole", "");
         isLogin = preferences.getBoolean("isLogin", false);
 
         if (!isLogin)
             mainBinding.btnProfile.setVisibility(View.GONE);
-
+        if (userRole.equalsIgnoreCase("admin"))
+            mainBinding.btnAdmin.setVisibility(View.VISIBLE);
 
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -81,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mainBinding.toolbar);
 
-        mainBinding.sideNav.setOnClickListener(l->{
+        mainBinding.sideNav.setOnClickListener(l -> {
             mainBinding.drawerLayout.openDrawer(GravityCompat.START);
         });
 
-        if (isLogin){
+        if (isLogin) {
             mainBinding.userName.setText(userName);
             mainBinding.btnLogin.setVisibility(View.GONE);
             mainBinding.btnLogout.setVisibility(View.VISIBLE);
@@ -107,27 +109,32 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(mainBinding.navView, navController);
 
 
-        mainBinding.btnLogin.setOnClickListener(l-> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
-        mainBinding.btnProfile.setOnClickListener(l-> {
+        mainBinding.btnLogin.setOnClickListener(l -> startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+        mainBinding.btnProfile.setOnClickListener(l -> {
             mainBinding.drawerLayout.close();
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
             navController.navigate(R.id.navigation_profile);
         });
 
-        mainBinding.btnAboutUs.setOnClickListener(l-> {
+        mainBinding.btnAdmin.setOnClickListener(l -> {
+            mainBinding.drawerLayout.close();
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_admin_all_photo);
+        });
+
+        mainBinding.btnAboutUs.setOnClickListener(l -> {
             loadRewordAd();
             showDialog("About Us !");
         });
-        mainBinding.btnContactUs.setOnClickListener(l-> {
+        mainBinding.btnContactUs.setOnClickListener(l -> {
             loadRewordAd();
             showDialog("Contact Us !");
         });
-        mainBinding.btnPrivacyPolicy.setOnClickListener(l-> {
+        mainBinding.btnPrivacyPolicy.setOnClickListener(l -> {
             loadRewordAd();
             showDialog("Privacy Policy !");
         });
-        mainBinding.btnLogout.setOnClickListener(l-> showLogoutDialog());
-
+        mainBinding.btnLogout.setOnClickListener(l -> showLogoutDialog());
 
 
     }
@@ -140,20 +147,20 @@ public class MainActivity extends AppCompatActivity {
         builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-      //  alertDialog.setCanceledOnTouchOutside(false);
+        //  alertDialog.setCanceledOnTouchOutside(false);
 
         Button yesButton = view.findViewById(R.id.btn_yes);
         Button noButton = view.findViewById(R.id.btn_no);
 
 
-        yesButton.setOnClickListener(l->{
-            if (provider.equalsIgnoreCase("google")){
+        yesButton.setOnClickListener(l -> {
+            if (provider.equalsIgnoreCase("google")) {
                 googleSignInClient.signOut().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                     }
                 });
-            }else {
+            } else {
                 LoginManager.getInstance().logOut();
             }
             editor.putString("userName", "");
@@ -196,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setCancelable(false);
         AlertDialog alertDialog = builder.create();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-      //  alertDialog.setCanceledOnTouchOutside(false);
+        //  alertDialog.setCanceledOnTouchOutside(false);
 
         TextView okButton = view.findViewById(R.id.btn_ok);
         TextView tvTitle = view.findViewById(R.id.tv_title);
@@ -223,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         alertDialog.show();
-       // customSizeAlertDialog(alertDialog, getActivity(), 0.7f);
+        // customSizeAlertDialog(alertDialog, getActivity(), 0.7f);
 
         Rect displayRectangle = new Rect();
         Window window = this.getWindow();
@@ -233,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void loadRewordAd(){
+    private void loadRewordAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
 
         RewardedAd.load(this, getResources().getString(R.string.reword_ad_unit_id),

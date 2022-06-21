@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "553091690353-1mmmnkp2cm9havbskhe1voq6vnoleqtp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rsdesign.wallpaper",
+            "certificate_hash": "aa572db34be0a5a828f60e56ffebfc667e8d9543"
+          }
+        },
+        {
           "client_id": "553091690353-i63biadtri67b3jfuhqid7buu7sv1r75.apps.googleusercontent.com",
           "client_type": 3
         }
