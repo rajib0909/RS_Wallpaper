@@ -68,6 +68,8 @@ public class PhotoViewFragment extends Fragment {
     private int photoHeight = 0;
     private ViewModel viewModel;
     private String token = "";
+    private boolean isWallpaperSet = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,10 +170,9 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
-        photoViewBinding.btnSetWallpaper.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onClick(View v) {
+        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+
+            if (!isWallpaperSet){
                 Glide.with(getContext())
                         .asBitmap()
                         .load(data.getImage()).into(new SimpleTarget<Bitmap>() {
@@ -182,6 +183,7 @@ public class PhotoViewFragment extends Fragment {
                             // set the wallpaper by calling the setResource function and
                             // passing the drawable file
                             wallpaperManager.setBitmap(resource);
+                            isWallpaperSet = true;
                             Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             // here the errors can be logged instead of printStackTrace
@@ -203,11 +205,11 @@ public class PhotoViewFragment extends Fragment {
                         }
                     });
                 } else {
-                   // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
                     Log.d("googleAd", "The rewarded ad wasn't ready yet.");
                 }
-
-
+            }else {
+                Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
             }
         });
 

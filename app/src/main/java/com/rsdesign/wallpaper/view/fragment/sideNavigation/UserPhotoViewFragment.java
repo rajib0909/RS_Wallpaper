@@ -3,7 +3,6 @@ package com.rsdesign.wallpaper.view.fragment.sideNavigation;
 import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.WallpaperManager;
@@ -14,6 +13,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,13 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-
-import android.os.Environment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -67,6 +65,7 @@ public class UserPhotoViewFragment extends Fragment {
     private int photoHeight = 0;
     private ViewModel viewModel;
     private String token = "";
+    private boolean isWallpaperSet = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -162,10 +161,8 @@ public class UserPhotoViewFragment extends Fragment {
         });
 
 
-        photoViewBinding.btnSetWallpaper.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onClick(View v) {
+        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+            if (!isWallpaperSet) {
                 Glide.with(getContext())
                         .asBitmap()
                         .load(data.getImage()).into(new SimpleTarget<Bitmap>() {
@@ -200,9 +197,11 @@ public class UserPhotoViewFragment extends Fragment {
                     // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
                     Log.d("googleAd", "The rewarded ad wasn't ready yet.");
                 }
-
-
+            } else {
+                Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
             }
+
+
         });
 
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.rsdesign.wallpaper.api.NetworkService;
 import com.rsdesign.wallpaper.model.allWallpaper.AllWallpaper;
 import com.rsdesign.wallpaper.model.categoryList.CategoryList;
+import com.rsdesign.wallpaper.model.deleteWallpaper.DeleteWallpaperResponse;
 import com.rsdesign.wallpaper.model.followUser.FollowUserResponse;
 import com.rsdesign.wallpaper.model.imageUpload.ImageUploadResponse;
 import com.rsdesign.wallpaper.model.likePhoto.PhotoLikeResponse;
@@ -43,6 +44,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<FollowUserResponse> followUserMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<ImageUploadResponse> imageUploadMutableLiveData = new MutableLiveData<>();
     public MutableLiveData<UserProfileResponse> userProfileMutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<DeleteWallpaperResponse> deleteWallpaperMutableLiveData = new MutableLiveData<>();
 
 
 
@@ -61,6 +63,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<Boolean> followUserLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> imageUploadLoadError = new MutableLiveData<>();
     public MutableLiveData<Boolean> userProfileLoadError = new MutableLiveData<>();
+    public MutableLiveData<Boolean> deleteWallpaperLoadError = new MutableLiveData<>();
 
 
 
@@ -397,6 +400,26 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             @Override
                             public void onError(@NonNull Throwable e) {
                                 followUserLoadError.setValue(true);
+                            }
+                        })
+        );
+    }
+
+    public void deleteWallpaperResponse(String token, String id) {
+        disposable.add(
+                networkService.deleteWallpaperResponse(token, id)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<DeleteWallpaperResponse>() {
+                            @Override
+                            public void onSuccess(@NonNull DeleteWallpaperResponse response) {
+                                deleteWallpaperMutableLiveData.setValue(response);
+                                deleteWallpaperLoadError.setValue(false);
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                deleteWallpaperLoadError.setValue(true);
                             }
                         })
         );

@@ -1,6 +1,7 @@
 package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.categoryId;
+import static com.rsdesign.wallpaper.util.utils.searchJobCategory;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,6 +65,8 @@ public class CategoryPhotoFragment extends Fragment {
 
         preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = preferences.edit();
+
+        categoryPhotoBinding.categoryTitle.setText(searchJobCategory);
 
         isLogin = preferences.getBoolean("isLogin", false);
         token = preferences.getString("token", "");
