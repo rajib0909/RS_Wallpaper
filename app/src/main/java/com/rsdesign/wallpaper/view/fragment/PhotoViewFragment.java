@@ -191,6 +191,7 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
+
         photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
             try {
                 wallpaperManager.setBitmap(photoViewBinding.cropImageView.getCroppedImage());
