@@ -76,7 +76,7 @@ public class UploadImageFragment extends Fragment {
         uploadImageBinding.choosePhoto.setOnClickListener(l -> {
             ImagePicker.Companion.with(this)
                     .crop(9f, 16f)                   //Crop image(Optional), Check Customization for more option
-                    .compress(500)            //Final image size will be less than 1 MB(Optional)
+                   // .compress(500)            //Final image size will be less than 1 MB(Optional)
                     .galleryOnly()
                     //.maxResultSize(512, 512)    //Final image resolution will be less than 1080 x 1080(Optional)
                     .start();

@@ -1,5 +1,6 @@
 package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
 import static com.rsdesign.wallpaper.util.utils.uploaderId;
@@ -10,10 +11,12 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +41,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.canhub.cropper.CropImageView;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -55,8 +59,20 @@ import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class PhotoViewFragment extends Fragment {
@@ -109,6 +125,10 @@ public class PhotoViewFragment extends Fragment {
                 .error(R.drawable.ic_logo);
 
         Glide.with(getContext()).load(data.getImage()).apply(options).into(photoViewBinding.image);
+       /* Uri uri =  Uri.parse( data.getImage() );
+
+        photoViewBinding.cropImageView.setImageResource(R.drawable.demo_image);*/
+
 
         Glide.with(this)
                 .asBitmap()
@@ -118,7 +138,14 @@ public class PhotoViewFragment extends Fragment {
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         photoHeight = resource.getHeight();
                         photoWidth = resource.getWidth();
+                        photoViewBinding.cropImageView.setImageBitmap(resource);
                         photoViewBinding.resolutionCount.setText(String.valueOf(photoHeight) + "x" + String.valueOf(photoWidth));
+
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        byte[] imageInByte = stream.toByteArray();
+                        long length = imageInByte.length;
+                        photoViewBinding.sizeCount.setText(String.valueOf((length / 1024)*2) + " KB");
                     }
 
                     @Override
@@ -126,17 +153,6 @@ public class PhotoViewFragment extends Fragment {
                     }
                 });
 
-        Glide.with(this)
-                .asFile()     // get size image url
-                .load(data.getImage())
-                .into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(@NonNull File resource, @Nullable
-                            Transition<? super File> transition) {
-                        long test = resource.length();     //  /1024 kb
-                        photoViewBinding.sizeCount.setText(String.valueOf(resource.length() / 1024) + " KB");
-                    }
-                });
 
         photoViewBinding.viewCount.setText(convertCount(Integer.parseInt(data.getViewCount())+ 1));
         photoViewBinding.downloadCount.setText(convertCount(Integer.parseInt(data.getDownload())));
@@ -176,7 +192,12 @@ public class PhotoViewFragment extends Fragment {
 
 
         photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
-
+            try {
+                wallpaperManager.setBitmap(photoViewBinding.cropImageView.getCroppedImage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+/*
             if (!isWallpaperSet){
                 Glide.with(getContext())
                         .asBitmap()
@@ -215,7 +236,7 @@ public class PhotoViewFragment extends Fragment {
                 }
             }else {
                 Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
-            }
+            }*/
         });
 
 
@@ -251,12 +272,14 @@ public class PhotoViewFragment extends Fragment {
         });
         photoViewBinding.btnDownload.setOnClickListener(l -> {
             viewModel.downloadCount(String.valueOf(data.getId()));
-            downloadImageNew("RS wallpaper", data.getImage());
+            /*downloadImageNew("RS wallpaper", data.getImage());
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(getActivity());
             } else {
                 Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
-            }
+            }*/
+
+            storeImage(photoViewBinding.cropImageView.getCroppedImage());
         });
 
         photoViewBinding.favourite.setOnClickListener(l->{
@@ -300,11 +323,13 @@ public class PhotoViewFragment extends Fragment {
         });
 
         photoViewBinding.btnShare.setOnClickListener(l -> {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            /*Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             String shareBody = data.getImage();
             shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(shareIntent, "Share via"));
+            startActivity(Intent.createChooser(shareIntent, "Share via"));*/
+
+            storeImage(photoViewBinding.cropImageView.getCroppedImage());
 
         });
 
@@ -440,6 +465,49 @@ public class PhotoViewFragment extends Fragment {
             Toast.makeText(getContext(), "Image download failed.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d("TAG",
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d("TAG", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        }
+    }
+
+    /** Create a File for saving an image or video */
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString()+ "/RS Wallpaper");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="RS_Wallpaper"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
+    }
+
+
 
 
     @Override

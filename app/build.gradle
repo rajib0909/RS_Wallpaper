@@ -107,6 +107,6 @@ dependencies {
     // Lottie dependency
     implementation "com.airbnb.android:lottie:3.4.0"
 
-
+    implementation 'com.github.CanHub:Android-Image-Cropper:4.3.0'
 
 }

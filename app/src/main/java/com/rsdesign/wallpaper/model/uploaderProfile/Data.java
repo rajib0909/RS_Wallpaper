@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 
 public class Data implements Serializable {
 
@@ -28,7 +29,7 @@ public class Data implements Serializable {
     private Boolean followedByMe;
     @SerializedName("wallpapers")
     @Expose
-    private List<Wallpaper> wallpapers = null;
+    private List<Datum> wallpapers = null;
 
     public Integer getId() {
         return id;
@@ -78,11 +79,11 @@ public class Data implements Serializable {
         this.followedByMe = followedByMe;
     }
 
-    public List<Wallpaper> getWallpapers() {
+    public List<Datum> getWallpapers() {
         return wallpapers;
     }
 
-    public void setWallpapers(List<Wallpaper> wallpapers) {
+    public void setWallpapers(List<Datum> wallpapers) {
         this.wallpapers = wallpapers;
     }
 

@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -101,7 +102,6 @@ public class HomeFragment extends Fragment {
             viewModel.allWallpaper(token, userId);
         } else
             viewModel.allWallpaper();
-
         observerAllWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
@@ -144,6 +144,16 @@ public class HomeFragment extends Fragment {
 
         });
 
+        homeBinding.refresh.setOnRefreshListener(() -> {
+            homeBinding.refresh.setRefreshing(false);
+            homeBinding.loading.setVisibility(View.VISIBLE);
+            if (isLogin) {
+                viewModel.allWallpaper(token, userId);
+            } else
+                viewModel.allWallpaper();
+            observerAllWallpapersViewModel();
+        });
+
         return homeBinding.getRoot();
     }
 
@@ -153,6 +163,8 @@ public class HomeFragment extends Fragment {
                 getViewLifecycleOwner(),
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
+                        photoResults.clear();
+                        allPhotoAdapterWithAd.clearPhotoList();
                         photoResults.addAll(allWallpaper.getData());
                         addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
