@@ -2,6 +2,8 @@ package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
+import static com.rsdesign.wallpaper.util.utils.uploaderId;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -28,6 +30,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -68,6 +73,8 @@ public class PhotoViewFragment extends Fragment {
     private int photoHeight = 0;
     private ViewModel viewModel;
     private String token = "";
+    private boolean isWallpaperSet = false;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,10 +175,9 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
-        photoViewBinding.btnSetWallpaper.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onClick(View v) {
+        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+
+            if (!isWallpaperSet){
                 Glide.with(getContext())
                         .asBitmap()
                         .load(data.getImage()).into(new SimpleTarget<Bitmap>() {
@@ -182,6 +188,7 @@ public class PhotoViewFragment extends Fragment {
                             // set the wallpaper by calling the setResource function and
                             // passing the drawable file
                             wallpaperManager.setBitmap(resource);
+                            isWallpaperSet = true;
                             Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             // here the errors can be logged instead of printStackTrace
@@ -203,11 +210,11 @@ public class PhotoViewFragment extends Fragment {
                         }
                     });
                 } else {
-                   // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
                     Log.d("googleAd", "The rewarded ad wasn't ready yet.");
                 }
-
-
+            }else {
+                Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -267,6 +274,12 @@ public class PhotoViewFragment extends Fragment {
                 Toast.makeText(getContext(), "Please, login first.", Toast.LENGTH_SHORT).show();
             }
 
+        });
+
+        photoViewBinding.showUploader.setOnClickListener(l->{
+            uploaderId = String.valueOf(data.getUploader().getId());
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_uploader_profile);
         });
 
         photoViewBinding.btnFollow.setOnClickListener(l->{

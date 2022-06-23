@@ -26,11 +26,11 @@ import java.util.Random;
 public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapter.ViewHolder> {
     private List<Datum> allResultList;
     private Context context;
-    public OnClickPhoto onClickPhoto;
+    public OnClickPhotoDelete onClickPhotoDelete;
 
 
-    public void setOnClickPhoto(OnClickPhoto onClickPhoto) {
-        this.onClickPhoto = onClickPhoto;
+    public void setOnClickPhotoDelete(OnClickPhotoDelete onClickPhotoDelete) {
+        this.onClickPhotoDelete = onClickPhotoDelete;
 
     }
 
@@ -50,8 +50,9 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
         this.allResultList.addAll(allResultList);
     }
 
-    public interface OnClickPhoto {
-        void onClickPhoto(int id);
+    public interface OnClickPhotoDelete {
+        void onClickPhotoDelete(int id, int position);
+
     }
 
 
@@ -70,7 +71,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Datum datum = allResultList.get(position);
-        holder.bind(datum);
+        holder.bind(datum, position);
 
     }
 
@@ -93,7 +94,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(Datum datum) {
+        public void bind(Datum datum, int position) {
 
             RequestOptions options = new RequestOptions()
                     .placeholder(R.drawable.ic_logo)
@@ -103,7 +104,7 @@ public class ShowAllPhotoAdapter extends RecyclerView.Adapter<ShowAllPhotoAdapte
             photoListBinding.tag.setText(datum.getTags());
             photoListBinding.category.setText(datum.getCategories().get(0).getName());
             photoListBinding.reportCount.setText("DMCA report ("+ datum.getCopyrightReport()+")");
-           // photoListBinding.seeDetails.setOnClickListener(l -> onClickPhoto.onClickPhoto(1));
+            photoListBinding.btnDelete.setOnClickListener(l -> onClickPhotoDelete.onClickPhotoDelete(datum.getId(), position));
 
             photoListBinding.executePendingBindings();
 

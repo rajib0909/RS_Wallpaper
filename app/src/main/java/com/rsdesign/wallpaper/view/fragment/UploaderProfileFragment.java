@@ -1,18 +1,12 @@
 package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
-import static com.rsdesign.wallpaper.util.utils.categoryId;
-import static com.rsdesign.wallpaper.util.utils.searchJobCategory;
 
-import android.content.DialogInterface;
-import android.content.Intent;
+import static com.rsdesign.wallpaper.util.utils.convertCount;
+import static com.rsdesign.wallpaper.util.utils.uploaderId;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -22,18 +16,26 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllPhotoAdapterWithAd;
-import com.rsdesign.wallpaper.databinding.FragmentCategoryPhotoBinding;
+import com.rsdesign.wallpaper.adapter.ShowUserPhotoAdapterWithAd;
+import com.rsdesign.wallpaper.databinding.FragmentUploaderProfileBinding;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
+import com.rsdesign.wallpaper.model.userProfile.Wallpaper;
 import com.rsdesign.wallpaper.util.utils;
-import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
@@ -41,62 +43,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CategoryPhotoFragment extends Fragment {
+public class UploaderProfileFragment extends Fragment {
 
-    FragmentCategoryPhotoBinding categoryPhotoBinding;
+    FragmentUploaderProfileBinding uploaderProfileBinding;
     private List<Object> photoResults;
-    private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
+    private ViewModel viewModel;
     private boolean isLogin = false;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
-    private ViewModel viewModel;
     private String token = "";
     private String userId = "";
-
+    private ShowAllPhotoAdapterWithAd allPhotoAdapterWithAd;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        categoryPhotoBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_photo, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        categoryPhotoBinding.btnBack.setOnClickListener(l -> getActivity().onBackPressed());
-        setHasOptionsMenu(true);
-        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+        uploaderProfileBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_uploader_profile, container, false);
 
+        viewModel = ViewModelProviders.of(this).get(ViewModel.class);
+        setHasOptionsMenu(true);
         preferences = getContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         editor = preferences.edit();
-
-        categoryPhotoBinding.categoryTitle.setText(searchJobCategory);
 
         isLogin = preferences.getBoolean("isLogin", false);
         token = preferences.getString("token", "");
         userId = String.valueOf(preferences.getInt("userId", 0));
+
+
         photoResults = new ArrayList<>();
-
-        categoryPhotoBinding.uploadImageButton.setOnClickListener(l -> {
-            if (isLogin) {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
-                navController.navigate(R.id.navigation_upload_image);
-            } else {
-                new MaterialAlertDialogBuilder(getContext())
-                        .setTitle("Alert")
-                        .setMessage("Please, Login first!")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                startActivity(new Intent(getActivity(), LoginActivity.class));
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            }
-
-        });
-
-
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -109,15 +86,19 @@ public class CategoryPhotoFragment extends Fragment {
                 }
             }
         });
-        categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
-        categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
+        uploaderProfileBinding.photoList.setLayoutManager(layoutManager);
+        uploaderProfileBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
-        categoryPhotoBinding.loading.setVisibility(View.VISIBLE);
-        if (isLogin) {
-            viewModel.categoryWallpaper(String.valueOf(categoryId), userId);
-        }else
-            viewModel.categoryWallpaper(String.valueOf(categoryId));
-        observerCategoryWallpapersViewModel();
+        uploaderProfileBinding.loading.setVisibility(View.VISIBLE);
+        uploaderProfileBinding.scrollView.setVisibility(View.GONE);
+        viewModel.uploaderProfile(userId, uploaderId);
+        observerProfileViewModel();
+
+        uploaderProfileBinding.uploadImageButton.setOnClickListener(l -> {
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_upload_image);
+
+        });
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
                                                   @Override
@@ -126,6 +107,7 @@ public class CategoryPhotoFragment extends Fragment {
                                                       Bundle bundle = new Bundle();
                                                       bundle.putSerializable("PhotoDetails", datum);
                                                       navController.navigate(R.id.navigation_view_photo, bundle);
+
                                                   }
                                               }
         );
@@ -137,35 +119,46 @@ public class CategoryPhotoFragment extends Fragment {
             }
         });
 
-        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-        allPhotoAdapterWithAd.notifyDataSetChanged();
 
-        return categoryPhotoBinding.getRoot();
+        return uploaderProfileBinding.getRoot();
     }
 
-    private void observerCategoryWallpapersViewModel() {
-        viewModel.categoryWallpaperMutableLiveData.observe(
+
+
+    private void observerProfileViewModel() {
+        viewModel.uploaderProfileMutableLiveData.observe(
                 getViewLifecycleOwner(),
-                wallpaper -> {
-                    if (wallpaper.getSuccess()) {
-                        photoResults.addAll(wallpaper.getData());
-                        addBannerAds();
-                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-                        allPhotoAdapterWithAd.notifyDataSetChanged();
-                        categoryPhotoBinding.loading.setVisibility(View.GONE);
+                profileResponse -> {
+                    if (profileResponse.getSuccess()) {
+                        uploaderProfileBinding.loading.setVisibility(View.GONE);
+                        uploaderProfileBinding.scrollView.setVisibility(View.VISIBLE);
+                        uploaderProfileBinding.userName.setText(profileResponse.getData().getName());
+                        uploaderProfileBinding.followingCount.setText(convertCount(Integer.parseInt(profileResponse.getData().getFollowers())));
+                        uploaderProfileBinding.wallpaperCount.setText(convertCount(profileResponse.getData().getWallpapers().size()));
+
+                        if (profileResponse.getData().getWallpapers().size() != 0){
+                            photoResults.addAll(profileResponse.getData().getWallpapers());
+                            addBannerAds();
+                            allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                            allPhotoAdapterWithAd.notifyDataSetChanged();
+                        }else {
+                        }
+
+
                     }
 
-                    viewModel.categoryWallpaperMutableLiveData = new MutableLiveData<>();
+                    viewModel.uploaderProfileMutableLiveData = new MutableLiveData<>();
                 }
         );
-        viewModel.categoryWallpaperLoadError.observe(
+        viewModel.uploaderProfileLoadError.observe(
                 getViewLifecycleOwner(), isError -> {
                     if (isError != null) {
                         if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                            categoryPhotoBinding.loading.setVisibility(View.GONE);
+                            uploaderProfileBinding.loading.setVisibility(View.GONE);
+                            // profileBinding.scrollView.setVisibility(View.VISIBLE);
                         }
-                        viewModel.categoryWallpaperLoadError = new MutableLiveData<>();
+                        viewModel.uploaderProfileLoadError = new MutableLiveData<>();
                     }
                 }
         );
@@ -218,8 +211,6 @@ public class CategoryPhotoFragment extends Fragment {
         // Load the banner ad.
         adView.loadAd(new AdRequest.Builder().build());
     }
-
-
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.action_menu, menu);
@@ -271,7 +262,6 @@ public class CategoryPhotoFragment extends Fragment {
         }
         super.onPause();
     }
-
 
     @Override
     public void onStart() {

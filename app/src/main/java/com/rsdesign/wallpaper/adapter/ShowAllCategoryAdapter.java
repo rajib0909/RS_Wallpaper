@@ -1,5 +1,7 @@
 package com.rsdesign.wallpaper.adapter;
 
+import static com.rsdesign.wallpaper.util.utils.searchJobCategory;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,7 +89,10 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
 
             Glide.with(context).load("https://image.tmdb.org/t/p/original" + datum.getPosterPath()).apply(options).into(allTopRatedMovieBinding.posterImage);
 */
-            categoryBinding.category.setOnClickListener(l -> onClickCategory.onClickCategory(datum.getId()));
+            categoryBinding.category.setOnClickListener(l -> {
+                searchJobCategory = datum.getDisplayName();
+                onClickCategory.onClickCategory(datum.getId());
+            });
             categoryBinding.categoryName.setText(datum.getDisplayName());
 
             categoryBinding.executePendingBindings();

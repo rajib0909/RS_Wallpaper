@@ -3,10 +3,12 @@ package com.rsdesign.wallpaper.api;
 
 import com.rsdesign.wallpaper.model.allWallpaper.AllWallpaper;
 import com.rsdesign.wallpaper.model.categoryList.CategoryList;
+import com.rsdesign.wallpaper.model.deleteWallpaper.DeleteWallpaperResponse;
 import com.rsdesign.wallpaper.model.followUser.FollowUserResponse;
 import com.rsdesign.wallpaper.model.imageUpload.ImageUploadResponse;
 import com.rsdesign.wallpaper.model.likePhoto.PhotoLikeResponse;
 import com.rsdesign.wallpaper.model.login.LoginResponse;
+import com.rsdesign.wallpaper.model.uploaderProfile.UploaderProfile;
 import com.rsdesign.wallpaper.model.userProfile.UserProfileResponse;
 import com.rsdesign.wallpaper.model.view.ViewCount;
 
@@ -21,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkService {
 
-    private static final String BASE_URL = "http://wallpaper.rsdesignerhub.com/api/v1/rswp/";
+    private static final String BASE_URL = "https://wallpaper.rsdesignerhub.com/api/v1/rswp/";
 
     private static NetworkService instance;
 
@@ -104,8 +106,16 @@ public class NetworkService {
         return api.userProfile(token);
     }
 
+    public Single<UploaderProfile> uploaderProfile(String userId, String uploaderId) {
+        return api.uploaderProfile(userId,uploaderId);
+    }
+
     public Single<FollowUserResponse> followUserWallpaper(String token, Map<String, String> value) {
         return api.followUserWallpaper(token, value);
+    }
+
+    public Single<DeleteWallpaperResponse> deleteWallpaperResponse(String token, String id) {
+        return api.deleteWallpaperResponse(token, id);
     }
 
     public Single<ImageUploadResponse> wallpaperUpload(String token, RequestBody tags, RequestBody categories, RequestBody title, RequestBody description, MultipartBody.Part file) {
