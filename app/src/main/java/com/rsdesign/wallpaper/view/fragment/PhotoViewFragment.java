@@ -199,6 +199,7 @@ public class PhotoViewFragment extends Fragment {
                 e.printStackTrace();
             }
 /*
+
             if (!isWallpaperSet){
                 Glide.with(getContext())
                         .asBitmap()
