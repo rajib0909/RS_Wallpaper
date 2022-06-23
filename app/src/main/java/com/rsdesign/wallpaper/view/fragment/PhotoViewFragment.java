@@ -2,6 +2,8 @@ package com.rsdesign.wallpaper.view.fragment;
 import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
+import static com.rsdesign.wallpaper.util.utils.uploaderId;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -28,6 +30,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -269,6 +274,12 @@ public class PhotoViewFragment extends Fragment {
                 Toast.makeText(getContext(), "Please, login first.", Toast.LENGTH_SHORT).show();
             }
 
+        });
+
+        photoViewBinding.showUploader.setOnClickListener(l->{
+            uploaderId = String.valueOf(data.getUploader().getId());
+            NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.navigation_uploader_profile);
         });
 
         photoViewBinding.btnFollow.setOnClickListener(l->{

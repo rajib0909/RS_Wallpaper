@@ -40,6 +40,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:text="ABC"
+                    android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@color/theme_color"
                     android:textFontWeight="600"
                     android:textSize="14sp" />

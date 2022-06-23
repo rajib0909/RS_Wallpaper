@@ -6,6 +6,7 @@ public class utils {
     public static boolean isLoginUser = false;
     public static String searchJobString = "";
     public static String searchJobCategory = "";
+    public static String uploaderId = "";
 
     public static String convertCount(int count){
         String returnCount= "";
