@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkService {
 
-    private static final String BASE_URL = "http://wallpaper.rsdesignerhub.com/api/v1/rswp/";
+    private static final String BASE_URL = "https://wallpaper.rsdesignerhub.com/api/v1/rswp/";
 
     private static NetworkService instance;
 
