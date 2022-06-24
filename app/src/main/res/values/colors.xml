@@ -7,6 +7,7 @@
     <color name="colorPrimary">#353434</color>
     <color name="colorPrimaryVariant">#1D1D1D</color>
     <color name="theme_color">#1D1D1D</color>
+    <color name="theme_color_light">#CC1D1D1D</color>
     <color name="background_color">#FCFCFC</color>
     <color name="splash_background_color">#E5E5E5</color>
     <color name="purple">#FF4668</color>

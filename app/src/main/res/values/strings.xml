@@ -70,5 +70,6 @@
     <string name="admin">Admin</string>
     <string name="admin_panel">Admin Panel</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="crop_wallpaper">Crop Wallpaper</string>
 
 </resources>

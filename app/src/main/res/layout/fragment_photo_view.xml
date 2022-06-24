@@ -9,19 +9,12 @@
         tools:context=".view.fragment.PhotoViewFragment">
 
         <ImageView
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@drawable/demo_image" />
-
-
-        <com.canhub.cropper.CropImageView
-            android:id="@+id/cropImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
 
         <ImageView
             android:id="@+id/btnBack"

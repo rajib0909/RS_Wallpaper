@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
         noButton.setOnClickListener(l -> alertDialog.cancel());
 
         alertDialog.show();
-        // customSizeAlertDialog(alertDialog, getActivity(), 0.7f);
 
         Rect displayRectangle = new Rect();
         Window window = this.getWindow();

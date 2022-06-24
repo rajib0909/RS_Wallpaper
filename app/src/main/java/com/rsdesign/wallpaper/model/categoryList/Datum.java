@@ -19,6 +19,18 @@ public class Datum {
     @Expose
     private Object parentCategoryId;
 
+    @SerializedName("image")
+    @Expose
+    private Object image;
+
+    public Object getImage() {
+        return image;
+    }
+
+    public void setImage(Object image) {
+        this.image = image;
+    }
+
     public Integer getId() {
         return id;
     }

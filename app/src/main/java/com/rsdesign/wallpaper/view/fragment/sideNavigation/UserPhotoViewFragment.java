@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.WallpaperManager;
 import android.content.Context;
@@ -14,10 +15,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,11 +31,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.canhub.cropper.CropImageView;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -48,8 +54,13 @@ import com.rsdesign.wallpaper.model.userProfile.Wallpaper;
 import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class UserPhotoViewFragment extends Fragment {
 
@@ -66,6 +77,7 @@ public class UserPhotoViewFragment extends Fragment {
     private ViewModel viewModel;
     private String token = "";
     private boolean isWallpaperSet = false;
+    private Bitmap imageBitmap = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,7 +95,7 @@ public class UserPhotoViewFragment extends Fragment {
 
 
         // creating the instance of the WallpaperManager
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
+        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity());
 
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -109,6 +121,12 @@ public class UserPhotoViewFragment extends Fragment {
                         photoHeight = resource.getHeight();
                         photoWidth = resource.getWidth();
                         photoViewBinding.resolutionCount.setText(String.valueOf(photoHeight) + "x" + String.valueOf(photoWidth));
+                        imageBitmap = resource;
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        resource.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        byte[] imageInByte = stream.toByteArray();
+                        long length = imageInByte.length;
+                        photoViewBinding.sizeCount.setText(String.valueOf((length / 1024) * 2) + " KB");
                     }
 
                     @Override
@@ -116,17 +134,7 @@ public class UserPhotoViewFragment extends Fragment {
                     }
                 });
 
-        Glide.with(this)
-                .asFile()     // get size image url
-                .load(data.getImage())
-                .into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(@NonNull File resource, @Nullable
-                            Transition<? super File> transition) {
-                        long test = resource.length();     //  /1024 kb
-                        photoViewBinding.sizeCount.setText(String.valueOf(resource.length() / 1024) + " KB");
-                    }
-                });
+
 
         photoViewBinding.viewCount.setText(convertCount(Integer.parseInt(data.getViewCount()) + 1));
         photoViewBinding.downloadCount.setText(convertCount(Integer.parseInt(data.getDownload())));
@@ -207,16 +215,128 @@ public class UserPhotoViewFragment extends Fragment {
 
         photoViewBinding.btnDownload.setOnClickListener(l -> {
             viewModel.downloadCount(String.valueOf(data.getId()));
-            downloadImageNew("RS wallpaper", data.getImage());
+           /* downloadImageNew("RS wallpaper", data.getImage());
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(getActivity());
+            } else {
+                Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
+            }*/
+
+            storeImage(imageBitmap);
+        });
+
+        photoViewBinding.btnCrop.setOnClickListener(l -> {
+            loadRewordAd();
+            loadInterstitialAd();
+            Dialog mDialog = new Dialog(getContext(), R.style.AppBaseTheme);
+            mDialog.setContentView(R.layout.dialog_image_crop);
+            CropImageView cropImageView = mDialog.findViewById(R.id.cropImageView);
+            ImageView btnClose = mDialog.findViewById(R.id.btnClose);
+            ImageView btnDownload = mDialog.findViewById(R.id.btnDownload);
+            TextView btnSetWallpaper = mDialog.findViewById(R.id.btnSetWallpaper);
+            LottieAnimationView loading = mDialog.findViewById(R.id.loading);
+
+            btnClose.setOnClickListener(view -> {
+                loadRewordAd();
+                loadInterstitialAd();
+                mDialog.cancel();
+            });
+
+            btnSetWallpaper.setOnClickListener(view -> {
+                try {
+                    wallpaperManager.setBitmap(cropImageView.getCroppedImage());
+                    Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (mRewardedAd != null) {
+                    Activity activityContext = getActivity();
+                    mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
+                        @Override
+                        public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                            // Handle the reward.
+                            Log.d("googleAd", "The user earned the reward.");
+                            int rewardAmount = rewardItem.getAmount();
+                            String rewardType = rewardItem.getType();
+                        }
+                    });
+                } else {
+                    // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                    Log.d("googleAd", "The rewarded ad wasn't ready yet.");
+                }
+            });
+
+            btnDownload.setOnClickListener(view -> {
+                loading.setVisibility(View.VISIBLE);
+                viewModel.downloadCount(String.valueOf(data.getId()));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loading.setVisibility(View.GONE);
+                        storeImage(cropImageView.getCroppedImage());
+                    }
+                }, 2000);
+
+
+            });
+
+            cropImageView.setImageBitmap(imageBitmap);
+            mDialog.show();
+
+
+        });
+
+        return photoViewBinding.getRoot();
+    }
+
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d("TAG",
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(getActivity());
             } else {
                 Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
             }
-        });
+            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_SHORT).show();
 
+        } catch (FileNotFoundException e) {
+            Log.d("TAG", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        }
+    }
 
-        return photoViewBinding.getRoot();
+    /**
+     * Create a File for saving an image or video
+     */
+    private File getOutputMediaFile() {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString() + "/RS Wallpaper");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName = "RS_Wallpaper" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
     }
 
     private void loadRewordAd() {
