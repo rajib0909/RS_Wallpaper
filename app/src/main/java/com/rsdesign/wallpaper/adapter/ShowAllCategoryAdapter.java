@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.ItemPhotoCategoryBinding;
 import com.rsdesign.wallpaper.model.Result;
@@ -83,12 +85,13 @@ public class ShowAllCategoryAdapter extends RecyclerView.Adapter<ShowAllCategory
 
         public void bind(Datum datum) {
 
-          /*  RequestOptions options = new RequestOptions()
-                    .placeholder(R.drawable.bongo)
-                    .error(R.drawable.bongo);
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.ic_logo)
+                    .error(R.drawable.ic_logo);
+            if (datum.getImage() instanceof String){
+                Glide.with(context).load(datum.getImage()).apply(options).into(categoryBinding.categoryImage);
+            }
 
-            Glide.with(context).load("https://image.tmdb.org/t/p/original" + datum.getPosterPath()).apply(options).into(allTopRatedMovieBinding.posterImage);
-*/
             categoryBinding.category.setOnClickListener(l -> {
                 searchJobCategory = datum.getDisplayName();
                 onClickCategory.onClickCategory(datum.getId());
