@@ -284,16 +284,14 @@
                     </LinearLayout>
 
 
-
-
-                    <TextView
+  <!--                  <TextView
                         android:id="@+id/btn_settings"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="4dp"
                         android:text="@string/settings"
                         android:textColor="@color/white_light"
-                        android:textSize="16sp" />
+                        android:textSize="16sp" />-->
 
                     <TextView
                         android:visibility="gone"

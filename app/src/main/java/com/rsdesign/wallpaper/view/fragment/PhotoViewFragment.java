@@ -37,9 +37,11 @@ import androidx.navigation.Navigation;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.transition.Transition;
 import com.canhub.cropper.CropImageView;
 import com.google.android.gms.ads.AdError;
@@ -61,6 +63,9 @@ import com.rsdesign.wallpaper.view.MainActivity;
 import com.rsdesign.wallpaper.view.OnboardingActivity;
 import com.rsdesign.wallpaper.view.SplashActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -183,7 +188,7 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
-        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+       /* photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
             if (!isWallpaperSet) {
                 Glide.with(getContext())
                         .asBitmap()
@@ -203,6 +208,56 @@ public class PhotoViewFragment extends Fragment {
                         }
                     }
 
+                });
+
+                if (mRewardedAd != null) {
+                    Activity activityContext = getActivity();
+                    mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
+                        @Override
+                        public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                            // Handle the reward.
+                            Log.d("googleAd", "The user earned the reward.");
+                            int rewardAmount = rewardItem.getAmount();
+                            String rewardType = rewardItem.getType();
+                        }
+                    });
+                } else {
+                    // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                    Log.d("googleAd", "The rewarded ad wasn't ready yet.");
+                }
+            } else {
+                Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
+
+        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+            if (!isWallpaperSet) {
+                Picasso.get().load(data.getImage()).into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        try {
+                            photoViewBinding.loading.setVisibility(View.GONE);
+                            // set the wallpaper by calling the setResource function and
+                            // passing the drawable file
+                            wallpaperManager.setBitmap(bitmap);
+                            isWallpaperSet = true;
+                            Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            // here the errors can be logged instead of printStackTrace
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        Toast.makeText(getContext(), "Sorry, Wallpaper not set", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        photoViewBinding.loading.setVisibility(View.VISIBLE);
+                    }
                 });
 
                 if (mRewardedAd != null) {
@@ -509,6 +564,7 @@ public class PhotoViewFragment extends Fragment {
     }
 
     private void storeImage(Bitmap image) {
+        photoViewBinding.loading.setVisibility(View.VISIBLE);
         File pictureFile = getOutputMediaFile();
         if (pictureFile == null) {
             Log.d("TAG",
@@ -524,6 +580,7 @@ public class PhotoViewFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
             }
+            photoViewBinding.loading.setVisibility(View.GONE);
             Toast.makeText(getContext(), "Image saved", Toast.LENGTH_SHORT).show();
 
         } catch (FileNotFoundException e) {
