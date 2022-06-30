@@ -34,14 +34,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.transition.Transition;
 import com.canhub.cropper.CropImageView;
 import com.google.android.gms.ads.AdError;
@@ -60,12 +57,7 @@ import com.rsdesign.wallpaper.databinding.FragmentPhotoViewBinding;
 import com.rsdesign.wallpaper.model.allWallpaper.Datum;
 import com.rsdesign.wallpaper.view.LoginActivity;
 import com.rsdesign.wallpaper.view.MainActivity;
-import com.rsdesign.wallpaper.view.OnboardingActivity;
-import com.rsdesign.wallpaper.view.SplashActivity;
 import com.rsdesign.wallpaper.viewModel.ViewModel;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -91,12 +83,12 @@ public class PhotoViewFragment extends Fragment {
     private String token = "";
     private boolean isWallpaperSet = false;
     private Bitmap imageBitmap = null;
-
+    private WallpaperManager wallpaperManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
 
         // Inflate the layout for this fragment
         photoViewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_photo_view, container, false);
@@ -110,7 +102,7 @@ public class PhotoViewFragment extends Fragment {
 
 
         // creating the instance of the WallpaperManager
-        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity());
+        wallpaperManager = WallpaperManager.getInstance(requireContext());
 
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -188,20 +180,33 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
-       /* photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
             if (!isWallpaperSet) {
+                Toast.makeText(getContext(), "Please wait, Setting wallpaper is in progress", Toast.LENGTH_SHORT).show();
                 Glide.with(getContext())
                         .asBitmap()
                         .load(data.getImage()).into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        //WallpaperManager.getInstance(getActivity().getApplicationContext()).setBitmap(resource);
                         try {
-                            // set the wallpaper by calling the setResource function and
-                            // passing the drawable file
                             wallpaperManager.setBitmap(resource);
                             isWallpaperSet = true;
-                            Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Wallpaper set successfully", Toast.LENGTH_SHORT).show();
+                            if (mRewardedAd != null) {
+                                Activity activityContext = getActivity();
+                                mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
+                                    @Override
+                                    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                                        // Handle the reward.
+                                        Log.d("googleAd", "The user earned the reward.");
+                                        int rewardAmount = rewardItem.getAmount();
+                                        String rewardType = rewardItem.getType();
+                                    }
+                                });
+                            } else {
+                                // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+                                Log.d("googleAd", "The rewarded ad wasn't ready yet.");
+                            }
                         } catch (IOException e) {
                             // here the errors can be logged instead of printStackTrace
                             e.printStackTrace();
@@ -209,30 +214,16 @@ public class PhotoViewFragment extends Fragment {
                     }
 
                 });
-
-                if (mRewardedAd != null) {
-                    Activity activityContext = getActivity();
-                    mRewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
-                        @Override
-                        public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-                            // Handle the reward.
-                            Log.d("googleAd", "The user earned the reward.");
-                            int rewardAmount = rewardItem.getAmount();
-                            String rewardType = rewardItem.getType();
-                        }
-                    });
-                } else {
-                    // Toast.makeText(getContext(), "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
-                    Log.d("googleAd", "The rewarded ad wasn't ready yet.");
-                }
             } else {
                 Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
             }
-        });*/
+        });
 
 
-        photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
+       /* photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
             if (!isWallpaperSet) {
+
+
                 Picasso.get().load(data.getImage()).into(new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -243,7 +234,8 @@ public class PhotoViewFragment extends Fragment {
                             wallpaperManager.setBitmap(bitmap);
                             isWallpaperSet = true;
                             Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
-                        } catch (IOException e) {
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), e.getMessage().toString(), Toast.LENGTH_SHORT).show();
                             // here the errors can be logged instead of printStackTrace
                             e.printStackTrace();
                         }
@@ -278,7 +270,7 @@ public class PhotoViewFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Wallpaper already set", Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
 
         photoViewBinding.reportPhoto.setOnClickListener(l -> {
@@ -313,13 +305,20 @@ public class PhotoViewFragment extends Fragment {
         });
         photoViewBinding.btnDownload.setOnClickListener(l -> {
             viewModel.downloadCount(String.valueOf(data.getId()));
- /*           downloadImageNew("RS wallpaper", data.getImage());
+            /* downloadImageNew("RS wallpaper", data.getImage());
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(getActivity());
             } else {
                 Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
             }*/
-             storeImage(imageBitmap);
+            photoViewBinding.loading.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    photoViewBinding.loading.setVisibility(View.GONE);
+                    storeImage(imageBitmap);
+                }
+            }, 2000);
         });
 
         photoViewBinding.favourite.setOnClickListener(l -> {
@@ -387,9 +386,10 @@ public class PhotoViewFragment extends Fragment {
             });
 
             btnSetWallpaper.setOnClickListener(view -> {
+                Toast.makeText(getContext(), "Please wait, Setting wallpaper is in progress", Toast.LENGTH_SHORT).show();
                 try {
                     wallpaperManager.setBitmap(cropImageView.getCroppedImage());
-                    Toast.makeText(getContext(), "Wallpaper updated", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Wallpaper set successfully", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -420,14 +420,10 @@ public class PhotoViewFragment extends Fragment {
                         storeImage(cropImageView.getCroppedImage());
                     }
                 }, 2000);
-
-
             });
 
             cropImageView.setImageBitmap(imageBitmap);
             mDialog.show();
-
-
         });
 
         return photoViewBinding.getRoot();
@@ -629,4 +625,6 @@ public class PhotoViewFragment extends Fragment {
         MainActivity.showBottomNav();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
+
+
 }
