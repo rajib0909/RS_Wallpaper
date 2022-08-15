@@ -4,13 +4,13 @@
 4
 5    <uses-sdk
 6        android:minSdkVersion="16"
-6-->G:\Android project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml
+6-->D:\Android Project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml
 7        android:targetSdkVersion="30" />
-7-->G:\Android project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml
+7-->D:\Android Project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml
 8
 9    <application android:supportsRtl="true" >
-9-->G:\Android project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml:3:3-5:17
-9-->G:\Android project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml:3:16-42
+9-->D:\Android Project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml:3:3-5:17
+9-->D:\Android Project\RS_Wallpaper\nativetemplates\src\main\AndroidManifest.xml:3:16-42
 10    </application>
 11
 12</manifest>
