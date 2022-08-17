@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "198795640259-e4i6fii11ietas2f5287orn9revvkplo.apps.googleusercontent.com",
+          "client_id": "198795640259-o93l5mon9on7m536o7qitt04jovcba4r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rsdesign.wallpaper",
-            "certificate_hash": "da0836d58f278dfbde57ee76b129b660aa7f9dd6"
+            "certificate_hash": "14a86e65d4ef6dc69a986bcd9935eda14c88fd1f"
           }
         },
         {
