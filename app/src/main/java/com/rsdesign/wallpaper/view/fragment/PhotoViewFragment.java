@@ -180,6 +180,7 @@ public class PhotoViewFragment extends Fragment {
         });
 
 
+
         photoViewBinding.btnSetWallpaper.setOnClickListener(v -> {
             if (!isWallpaperSet) {
                 Toast.makeText(getContext(), "Please wait, Setting wallpaper is in progress", Toast.LENGTH_SHORT).show();
