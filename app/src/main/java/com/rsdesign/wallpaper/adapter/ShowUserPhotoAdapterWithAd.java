@@ -103,6 +103,14 @@ public class ShowUserPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerVie
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
                     Wallpaper result = (Wallpaper) allResultList.get(position);
 
+                    if (position == 4){
+                        photoVIewHolder.itemView.setVisibility(View.GONE);
+                        ViewGroup.LayoutParams params = photoVIewHolder.itemView.getLayoutParams();
+                        params.height = 0;
+                        params.width = 0;
+                        holder.itemView.setLayoutParams(params);
+                    }
+
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
                     photoVIewHolder.photoType.setText(result.getCategories().get(0).getName());

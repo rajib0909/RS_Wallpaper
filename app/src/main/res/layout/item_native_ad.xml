@@ -9,11 +9,5 @@
         app:cardCornerRadius="10dp"
         app:cardElevation="4dp">
 
-   <!--     <com.google.android.ads.nativetemplates.TemplateView
-            android:id="@+id/my_native_template"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:gnt_template_type="@layout/gnt_medium_template_view" />-->
-
     </com.google.android.material.card.MaterialCardView>
 </layout>
