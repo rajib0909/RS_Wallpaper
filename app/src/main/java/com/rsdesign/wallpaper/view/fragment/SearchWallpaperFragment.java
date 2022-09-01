@@ -109,7 +109,7 @@ public class SearchWallpaperFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+  /*      layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -120,7 +120,7 @@ public class SearchWallpaperFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         searchWallpaperBinding.trendingPostList.setLayoutManager(layoutManager);
         searchWallpaperBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -174,7 +174,7 @@ public class SearchWallpaperFragment extends Fragment {
                         if (allWallpaper.getData().size()!=0){
                             searchWallpaperBinding.notFound.setVisibility(View.GONE);
                             photoResults.addAll(allWallpaper.getData());
-                            addBannerAds();
+                           // addBannerAds();
                             allPhotoAdapterWithAd.updatePhotoList(photoResults);
                             allPhotoAdapterWithAd.notifyDataSetChanged();
                         }else {

@@ -27,14 +27,17 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.ads.nativetemplates.NativeTemplateStyle;
 import com.google.android.ads.nativetemplates.TemplateView;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.UnifiedNativeAd;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -74,28 +77,35 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
         MaterialButton fbButton = findViewById(R.id.btn_facebook);
         MaterialButton googleButton = findViewById(R.id.btn_google);
-        bannerAdView = findViewById(R.id.adView);
+        //bannerAdView = findViewById(R.id.adView);
         loading = findViewById(R.id.loading);
 
-        AdRequest adRequest = new AdRequest.Builder().build();
+        /*AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
-       /* AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+        AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
                 .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
                     @Override
-                    public void onNativeAdLoaded(NativeAd nativeAd) {
-                        NativeTemplateStyle styles = new
-                                NativeTemplateStyle.Builder().build();
-                        TemplateView template = findViewById(R.id.my_template);
-                        template.setStyles(styles);
-                        template.setNativeAd(nativeAd);
+                    public void onNativeAdLoaded(NativeAd NativeAd) {
+                        // Show the ad.
                     }
                 })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+                        // Handle the failure by logging, altering the UI, and so on.
+                       // Toast.makeText(this, )
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+                        // Methods in the NativeAdOptions.Builder class can be
+                        // used here to specify individual options settings.
+                        .build())
                 .build();
 
-        adLoader.loadAd(new AdRequest.Builder().build());*/
+        adLoader.loadAd(new AdRequest.Builder().build());
 
-
+*/
         // Facebook login
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager,

@@ -93,7 +93,7 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/rsfinal" />
 
-        <com.google.android.gms.ads.AdView
+        <!--<com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,13 +101,17 @@
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />-->
 
-      <!--  <com.google.android.ads.nativetemplates.TemplateView
-            android:id="@+id/my_template"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:gnt_template_type="@layout/gnt_small_template_view" />-->
+      <!--  &lt;!&ndash; Template View for native ad &ndash;&gt;
+        <com.google.android.ads.nativetemplates.TemplateView
+            android:layout_alignParentBottom= "true"
+            android:visibility= "visible"
+            android:id= "@+id/nativeTemplateView"
+            app:gnt_template_type= "@layout/gnt_small_template_view"
+            android:layout_width= "match_parent"
+            android:layout_height= "wrap_content"
+            tools:ignore="MissingConstraints" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

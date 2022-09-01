@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        loadRewordAd();
+       // loadRewordAd();
 
 
         navigationView = mainBinding.navView;
@@ -123,15 +123,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mainBinding.btnAboutUs.setOnClickListener(l -> {
-            loadRewordAd();
+           // loadRewordAd();
             showDialog("About Us !");
         });
         mainBinding.btnContactUs.setOnClickListener(l -> {
-            loadRewordAd();
+           // loadRewordAd();
             showDialog("Contact Us !");
         });
         mainBinding.btnPrivacyPolicy.setOnClickListener(l -> {
-            loadRewordAd();
+           // loadRewordAd();
             showDialog("Privacy Policy !");
         });
         mainBinding.btnLogout.setOnClickListener(l -> showLogoutDialog());

@@ -97,7 +97,7 @@ public class CategoryPhotoFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+  /*      layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -108,7 +108,7 @@ public class CategoryPhotoFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
         categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
@@ -149,7 +149,7 @@ public class CategoryPhotoFragment extends Fragment {
                 wallpaper -> {
                     if (wallpaper.getSuccess()) {
                         photoResults.addAll(wallpaper.getData());
-                        addBannerAds();
+                       // addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         categoryPhotoBinding.loading.setVisibility(View.GONE);

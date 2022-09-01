@@ -93,7 +93,7 @@ public class TrendingFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+   /*     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -104,7 +104,7 @@ public class TrendingFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         trendingBinding.trendingPostList.setLayoutManager(layoutManager);
         trendingBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -145,7 +145,7 @@ public class TrendingFragment extends Fragment {
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
                         photoResults.addAll(allWallpaper.getData());
-                        addBannerAds();
+                       // addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         trendingBinding.loading.setVisibility(View.GONE);

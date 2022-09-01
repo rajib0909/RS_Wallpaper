@@ -115,13 +115,14 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
                     Datum result = (Datum) allResultList.get(position);
 
-                    if (position == 4){
+                /*    if (position == 4){
                         photoVIewHolder.itemView.setVisibility(View.GONE);
                         ViewGroup.LayoutParams params = photoVIewHolder.itemView.getLayoutParams();
                         params.height = 0;
                         params.width = 0;
                         holder.itemView.setLayoutParams(params);
-                    }
+                    }*/
+
 
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
@@ -175,7 +176,7 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
             return ITEM_TYPE_PHOTO;
         } else {
             if (position % utils.AD_PER_PHOTO == 0) {
-                return ITEM_TYPE_BANNER_AD;
+                return ITEM_TYPE_PHOTO;
             } else
                 return ITEM_TYPE_PHOTO;
         }

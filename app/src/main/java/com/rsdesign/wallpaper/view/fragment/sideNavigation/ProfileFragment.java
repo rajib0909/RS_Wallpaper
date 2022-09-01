@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment {
         photoResults = new ArrayList<>();
         userPhotoAdapterWithAd = new ShowUserPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+/*        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         profileBinding.photoList.setLayoutManager(layoutManager);
         profileBinding.photoList.setAdapter(userPhotoAdapterWithAd);
 
@@ -130,7 +130,7 @@ public class ProfileFragment extends Fragment {
 
                         if (profileResponse.getData().getWallpapers().size() != 0){
                             photoResults.addAll(profileResponse.getData().getWallpapers());
-                            addBannerAds();
+                           // addBannerAds();
                             userPhotoAdapterWithAd.updatePhotoList(photoResults);
                             userPhotoAdapterWithAd.notifyDataSetChanged();
                             profileBinding.notFound.setVisibility(View.GONE);
