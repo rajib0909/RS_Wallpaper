@@ -250,7 +250,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadBannerAds() {
-        loadBannerAds(i);
+        loadBannerAds(utils.AD_PER_PHOTO);
     }
 
     private void loadBannerAds(int index) {
