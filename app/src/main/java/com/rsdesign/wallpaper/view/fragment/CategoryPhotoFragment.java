@@ -22,6 +22,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -96,8 +98,7 @@ public class CategoryPhotoFragment extends Fragment {
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-  /*      layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -108,7 +109,7 @@ public class CategoryPhotoFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });*/
+        });
         categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
         categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
@@ -149,10 +150,11 @@ public class CategoryPhotoFragment extends Fragment {
                 wallpaper -> {
                     if (wallpaper.getSuccess()) {
                         photoResults.addAll(wallpaper.getData());
-                       // addBannerAds();
+                        addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         categoryPhotoBinding.loading.setVisibility(View.GONE);
+                        categoryPhotoBinding.noInternet.setVisibility(View.GONE);
                     }
 
                     viewModel.categoryWallpaperMutableLiveData = new MutableLiveData<>();
@@ -164,11 +166,27 @@ public class CategoryPhotoFragment extends Fragment {
                         if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             categoryPhotoBinding.loading.setVisibility(View.GONE);
+                            categoryPhotoBinding.noInternet.setVisibility(View.GONE);
                         }
                         viewModel.categoryWallpaperLoadError = new MutableLiveData<>();
                     }
                 }
         );
+
+        viewModel.noInternet.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Glide.with(getContext()).load(R.drawable.no_internet_1).into(categoryPhotoBinding.noInternet);
+                            categoryPhotoBinding.loading.setVisibility(View.GONE);
+                            categoryPhotoBinding.noInternet.setVisibility(View.VISIBLE);
+                            categoryPhotoBinding.scrollView.setVisibility(View.VISIBLE);
+                        }
+                        viewModel.allWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
     }
 
     private void addBannerAds() {

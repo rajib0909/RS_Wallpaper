@@ -20,6 +20,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Query;
 
 public class NetworkService {
 
@@ -50,12 +51,12 @@ public class NetworkService {
         return api.userLogin(value);
     }
 
-    public Single<AllWallpaper> allWallpaper() {
-        return api.allWallpaper();
+    public Single<AllWallpaper> allWallpaper(int page) {
+        return api.allWallpaper(page);
     }
 
-    public Single<AllWallpaper> allWallpaper(String token, String userId) {
-        return api.allWallpaper(token, userId);
+    public Single<AllWallpaper> allWallpaper(String token, String userId, int page) {
+        return api.allWallpaper(token, userId, page);
     }
 
     public Single<AllWallpaper> trendingWallpaper() {
@@ -107,7 +108,7 @@ public class NetworkService {
     }
 
     public Single<UploaderProfile> uploaderProfile(String userId, String uploaderId) {
-        return api.uploaderProfile(userId,uploaderId);
+        return api.uploaderProfile(userId, uploaderId);
     }
 
     public Single<FollowUserResponse> followUserWallpaper(String token, Map<String, String> value) {

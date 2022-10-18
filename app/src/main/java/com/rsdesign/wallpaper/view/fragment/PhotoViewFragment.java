@@ -158,8 +158,8 @@ public class PhotoViewFragment extends Fragment {
             photoViewBinding.btnFollow.setImageResource(R.drawable.ic_follow);
 
 
-       /* loadInterstitialAd();
-        loadRewordAd();*/
+        loadInterstitialAd();
+        loadRewordAd();
 
 
         photoViewBinding.btnArrow.setOnClickListener(l -> {
@@ -370,8 +370,8 @@ public class PhotoViewFragment extends Fragment {
 
 
         photoViewBinding.btnCrop.setOnClickListener(l -> {
-           // loadRewordAd();
-           // loadInterstitialAd();
+            loadRewordAd();
+            loadInterstitialAd();
             Dialog mDialog = new Dialog(getContext(), R.style.AppBaseTheme);
             mDialog.setContentView(R.layout.dialog_image_crop);
             CropImageView cropImageView = mDialog.findViewById(R.id.cropImageView);
@@ -381,8 +381,8 @@ public class PhotoViewFragment extends Fragment {
             LottieAnimationView loading = mDialog.findViewById(R.id.loading);
 
             btnClose.setOnClickListener(view -> {
-               // loadRewordAd();
-               // loadInterstitialAd();
+                loadRewordAd();
+                loadInterstitialAd();
                 mDialog.cancel();
             });
 

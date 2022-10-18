@@ -138,7 +138,7 @@ public class UploaderProfileFragment extends Fragment {
 
                         if (profileResponse.getData().getWallpapers().size() != 0){
                             photoResults.addAll(profileResponse.getData().getWallpapers());
-                           // addBannerAds();
+                            addBannerAds();
                             allPhotoAdapterWithAd.updatePhotoList(photoResults);
                             allPhotoAdapterWithAd.notifyDataSetChanged();
                         }else {

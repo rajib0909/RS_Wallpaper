@@ -52,6 +52,7 @@ public class AdminAllPhotoFragment extends Fragment {
     private String token = "";
     private String userId = "";
     private String searchTag = "";
+    private int page = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,7 +79,7 @@ public class AdminAllPhotoFragment extends Fragment {
 
         photoBinding.loading.setVisibility(View.VISIBLE);
         if (searchTag.equalsIgnoreCase("")){
-            viewModel.allWallpaper(token, userId);
+            viewModel.allWallpaper(token, userId, page);
             observerAllWallpapersViewModel();
         }else {
             viewModel.searchWallpaper(token, userId, searchTag);
@@ -124,7 +125,7 @@ public class AdminAllPhotoFragment extends Fragment {
                 if (charSequence.length() == 0){
                     searchTag = "";
                     photoBinding.loading.setVisibility(View.VISIBLE);
-                    viewModel.allWallpaper(token, userId);
+                    viewModel.allWallpaper(token, userId, page);
                     observerAllWallpapersViewModel();
                 }
             }

@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -93,7 +94,7 @@ public class TrendingFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-   /*     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -104,7 +105,7 @@ public class TrendingFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });*/
+        });
         trendingBinding.trendingPostList.setLayoutManager(layoutManager);
         trendingBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -145,10 +146,12 @@ public class TrendingFragment extends Fragment {
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
                         photoResults.addAll(allWallpaper.getData());
-                       // addBannerAds();
+                        addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         trendingBinding.loading.setVisibility(View.GONE);
+                        trendingBinding.noInternet.setVisibility(View.GONE);
+
                     }
 
                     viewModel.trendingWallpaperMutableLiveData = new MutableLiveData<>();
@@ -160,8 +163,23 @@ public class TrendingFragment extends Fragment {
                         if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             trendingBinding.loading.setVisibility(View.GONE);
+                            trendingBinding.noInternet.setVisibility(View.GONE);
                         }
                         viewModel.trendingWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
+        viewModel.noInternet.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Glide.with(getContext()).load(R.drawable.no_internet_1).into(trendingBinding.noInternet);
+                            trendingBinding.loading.setVisibility(View.GONE);
+                            trendingBinding.noInternet.setVisibility(View.VISIBLE);
+                            trendingBinding.scrollView.setVisibility(View.VISIBLE);
+                        }
+                        viewModel.allWallpaperLoadError = new MutableLiveData<>();
                     }
                 }
         );

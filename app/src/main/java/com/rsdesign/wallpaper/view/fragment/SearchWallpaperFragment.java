@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -58,6 +59,7 @@ public class SearchWallpaperFragment extends Fragment {
     private String userId = "";
     private String searchTag = "";
     private boolean clearText = false;
+    int page = 1;
 
 
     @Override
@@ -108,8 +110,7 @@ public class SearchWallpaperFragment extends Fragment {
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-  /*      layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -120,7 +121,7 @@ public class SearchWallpaperFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });*/
+        });
         searchWallpaperBinding.trendingPostList.setLayoutManager(layoutManager);
         searchWallpaperBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -152,9 +153,9 @@ public class SearchWallpaperFragment extends Fragment {
             observerSearchWallpapersViewModel();
         }else {
             if (isLogin) {
-                viewModel.allWallpaper(token, userId);
+                viewModel.allWallpaper(token, userId, page);
             } else
-                viewModel.allWallpaper();
+                viewModel.allWallpaper(page);
 
             observerAllWallpapersViewModel();
         }
@@ -171,10 +172,11 @@ public class SearchWallpaperFragment extends Fragment {
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
                         searchWallpaperBinding.loading.setVisibility(View.GONE);
+                        searchWallpaperBinding.noInternet.setVisibility(View.GONE);
                         if (allWallpaper.getData().size()!=0){
                             searchWallpaperBinding.notFound.setVisibility(View.GONE);
                             photoResults.addAll(allWallpaper.getData());
-                           // addBannerAds();
+                            addBannerAds();
                             allPhotoAdapterWithAd.updatePhotoList(photoResults);
                             allPhotoAdapterWithAd.notifyDataSetChanged();
                         }else {
@@ -193,8 +195,23 @@ public class SearchWallpaperFragment extends Fragment {
                             searchWallpaperBinding.notFound.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             searchWallpaperBinding.loading.setVisibility(View.GONE);
+                            searchWallpaperBinding.noInternet.setVisibility(View.GONE);
                         }
                         viewModel.searchWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
+        viewModel.noInternet.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Glide.with(getContext()).load(R.drawable.no_internet_1).into(searchWallpaperBinding.noInternet);
+                            searchWallpaperBinding.loading.setVisibility(View.GONE);
+                            searchWallpaperBinding.noInternet.setVisibility(View.VISIBLE);
+                            searchWallpaperBinding.scrollView.setVisibility(View.VISIBLE);
+                        }
+                        viewModel.allWallpaperLoadError = new MutableLiveData<>();
                     }
                 }
         );
@@ -335,9 +352,9 @@ public class SearchWallpaperFragment extends Fragment {
                     allPhotoAdapterWithAd.notifyDataSetChanged();
                     clearText = true;
                     if (isLogin) {
-                        viewModel.allWallpaper(token, userId);
+                        viewModel.allWallpaper(token, userId, page);
                     } else
-                        viewModel.allWallpaper();
+                        viewModel.allWallpaper(page);
                     observerAllWallpapersViewModel();
                 }
                 return true;
@@ -359,9 +376,9 @@ public class SearchWallpaperFragment extends Fragment {
             allPhotoAdapterWithAd.notifyDataSetChanged();
             clearText = true;
             if (isLogin) {
-                viewModel.allWallpaper(token, userId);
+                viewModel.allWallpaper(token, userId, page);
             } else
-                viewModel.allWallpaper();
+                viewModel.allWallpaper(page);
 
             observerAllWallpapersViewModel();
         });

@@ -39,13 +39,16 @@ public interface Api {
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/all")
-    Single<AllWallpaper> allWallpaper();
+    Single<AllWallpaper> allWallpaper(
+            @Query("page") int page
+    );
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/all")
     Single<AllWallpaper> allWallpaper(
             @Header("Authorization") String token,
-            @Query("user_id") String id
+            @Query("user_id") String id,
+            @Query("page") int page
     );
 
     @Headers({"Accept: application/json"})

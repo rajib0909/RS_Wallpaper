@@ -1,5 +1,8 @@
 package com.rsdesign.wallpaper.viewModel;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.rsdesign.wallpaper.api.NetworkService;
@@ -15,6 +18,7 @@ import com.rsdesign.wallpaper.model.userProfile.UserProfileResponse;
 import com.rsdesign.wallpaper.model.view.ViewCount;
 
 import java.io.File;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,8 +53,6 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<DeleteWallpaperResponse> deleteWallpaperMutableLiveData = new MutableLiveData<>();
 
 
-
-
     /**
      * only exposes immutable Boolen LiveData objects to observe usersLoadError
      */
@@ -69,11 +71,11 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public MutableLiveData<Boolean> deleteWallpaperLoadError = new MutableLiveData<>();
 
 
-
     /**
      * only exposes immutable Boolen LiveData objects to observe loading
      */
     public MutableLiveData<Boolean> loading = new MutableLiveData<>();
+    public MutableLiveData<Boolean> noInternet = new MutableLiveData<>();
 
     /**
      * Call network service
@@ -103,9 +105,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-    public void allWallpaper() {
+    public void allWallpaper(int page) {
         disposable.add(
-                networkService.allWallpaper()
+                networkService.allWallpaper(page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -113,19 +115,26 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 allWallpaperMutableLiveData.setValue(allWallpaper);
                                 allWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                allWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    allWallpaperLoadError.setValue(false);
+                                } else {
+                                    allWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
     }
 
-    public void allWallpaper(String token, String userId) {
+    public void allWallpaper(String token, String userId, int page) {
         disposable.add(
-                networkService.allWallpaper(token, userId)
+                networkService.allWallpaper(token, userId, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -133,11 +142,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 allWallpaperMutableLiveData.setValue(allWallpaper);
                                 allWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                allWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    allWallpaperLoadError.setValue(false);
+                                } else {
+                                    allWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -154,11 +170,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 trendingWallpaperMutableLiveData.setValue(allWallpaper);
                                 trendingWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                trendingWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    trendingWallpaperLoadError.setValue(false);
+                                } else {
+                                    trendingWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -174,11 +197,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 trendingWallpaperMutableLiveData.setValue(allWallpaper);
                                 trendingWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                trendingWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    trendingWallpaperLoadError.setValue(false);
+                                } else {
+                                    trendingWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -195,11 +225,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 searchWallpaperMutableLiveData.setValue(allWallpaper);
                                 searchWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                searchWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    searchWallpaperLoadError.setValue(false);
+                                } else {
+                                    searchWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -215,11 +252,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper allWallpaper) {
                                 searchWallpaperMutableLiveData.setValue(allWallpaper);
                                 searchWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                searchWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    searchWallpaperLoadError.setValue(false);
+                                } else {
+                                    searchWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -235,11 +279,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper categoryWallpaper) {
                                 categoryWallpaperMutableLiveData.setValue(categoryWallpaper);
                                 categoryWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                categoryWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    categoryWallpaperLoadError.setValue(false);
+                                } else {
+                                    categoryWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -255,11 +306,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull AllWallpaper categoryWallpaper) {
                                 categoryWallpaperMutableLiveData.setValue(categoryWallpaper);
                                 categoryWallpaperLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                categoryWallpaperLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    categoryWallpaperLoadError.setValue(false);
+                                } else {
+                                    categoryWallpaperLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -275,11 +333,18 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
                             public void onSuccess(@NonNull CategoryList categoryList) {
                                 categoryListMutableLiveData.setValue(categoryList);
                                 categoryListLoadError.setValue(false);
+                                noInternet.setValue(false);
                             }
 
                             @Override
                             public void onError(@NonNull Throwable e) {
-                                categoryListLoadError.setValue(true);
+                                if (e instanceof UnknownHostException) {
+                                    noInternet.setValue(true);
+                                    categoryListLoadError.setValue(false);
+                                } else {
+                                    categoryListLoadError.setValue(true);
+                                    noInternet.setValue(false);
+                                }
                             }
                         })
         );
@@ -406,9 +471,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
- public void followUserWallpaper(String token, String uploaderId) {
-     Map<String, String> value = new HashMap<>();
-     value.put("following", uploaderId);
+    public void followUserWallpaper(String token, String uploaderId) {
+        Map<String, String> value = new HashMap<>();
+        value.put("following", uploaderId);
         disposable.add(
                 networkService.followUserWallpaper(token, value)
                         .subscribeOn(Schedulers.newThread())

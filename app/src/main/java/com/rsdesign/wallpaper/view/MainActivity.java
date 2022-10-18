@@ -9,13 +9,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +23,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.facebook.login.LoginManager;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -42,7 +39,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.databinding.ActivityMainBinding;
-import com.rsdesign.wallpaper.util.utils;
 
 public class MainActivity extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-       // loadRewordAd();
+        loadRewordAd();
 
 
         navigationView = mainBinding.navView;
@@ -123,15 +119,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mainBinding.btnAboutUs.setOnClickListener(l -> {
-           // loadRewordAd();
+            loadRewordAd();
             showDialog("About Us !");
         });
         mainBinding.btnContactUs.setOnClickListener(l -> {
-           // loadRewordAd();
+            loadRewordAd();
             showDialog("Contact Us !");
         });
         mainBinding.btnPrivacyPolicy.setOnClickListener(l -> {
-           // loadRewordAd();
+            loadRewordAd();
             showDialog("Privacy Policy !");
         });
         mainBinding.btnLogout.setOnClickListener(l -> showLogoutDialog());
@@ -223,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                Toast.makeText(this, "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "The rewarded ad wasn't ready yet.", Toast.LENGTH_SHORT).show();
                 Log.d("googleAd", "The rewarded ad wasn't ready yet.");
             }
         });

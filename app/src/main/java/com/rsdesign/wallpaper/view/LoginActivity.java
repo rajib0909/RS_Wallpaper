@@ -77,13 +77,13 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ViewModel.class);
         MaterialButton fbButton = findViewById(R.id.btn_facebook);
         MaterialButton googleButton = findViewById(R.id.btn_google);
-        //bannerAdView = findViewById(R.id.adView);
+        bannerAdView = findViewById(R.id.adView);
         loading = findViewById(R.id.loading);
 
-        /*AdRequest adRequest = new AdRequest.Builder().build();
+      AdRequest adRequest = new AdRequest.Builder().build();
         bannerAdView.loadAd(adRequest);
 
-        AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+     /*     AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
                 .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
                     @Override
                     public void onNativeAdLoaded(NativeAd NativeAd) {

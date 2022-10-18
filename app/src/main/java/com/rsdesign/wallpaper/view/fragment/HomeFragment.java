@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -21,7 +23,9 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -51,6 +55,9 @@ public class HomeFragment extends Fragment {
     SharedPreferences.Editor editor;
     private String token = "";
     private String userId = "";
+    private int page = 1;
+    private boolean isLoad = true;
+    private int i = utils.AD_PER_PHOTO;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -77,7 +84,7 @@ public class HomeFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-    /*    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -88,18 +95,17 @@ public class HomeFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });*/
+        });
         homeBinding.photoList.setLayoutManager(layoutManager);
         homeBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
         homeBinding.loading.setVisibility(View.VISIBLE);
-        homeBinding.scrollView.setVisibility(View.GONE);
-
+        homeBinding.photoList.setVisibility(View.GONE);
 
         if (isLogin) {
-            viewModel.allWallpaper(token, userId);
+            viewModel.allWallpaper(token, userId, page);
         } else
-            viewModel.allWallpaper();
+            viewModel.allWallpaper(page);
         observerAllWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
@@ -145,12 +151,33 @@ public class HomeFragment extends Fragment {
         homeBinding.refresh.setOnRefreshListener(() -> {
             homeBinding.refresh.setRefreshing(false);
             homeBinding.loading.setVisibility(View.VISIBLE);
+           page = 1;
             if (isLogin) {
-                viewModel.allWallpaper(token, userId);
+                viewModel.allWallpaper(token, userId, page);
             } else
-                viewModel.allWallpaper();
+                viewModel.allWallpaper(page);
             observerAllWallpapersViewModel();
         });
+
+
+        homeBinding.scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    Log.d("Tanvir", "Api call Hit" + page);
+                    Toast.makeText(getContext(), "Hit " + String.valueOf(page), Toast.LENGTH_SHORT).show();
+                    page++;
+                    homeBinding.loading.setVisibility(View.VISIBLE);
+                    if (isLogin) {
+                        viewModel.allWallpaper(token, userId, page);
+                    } else
+                        viewModel.allWallpaper(page);
+                    observerAllWallpapersViewModel();
+
+                }
+            }
+        });
+
 
         return homeBinding.getRoot();
     }
@@ -158,20 +185,27 @@ public class HomeFragment extends Fragment {
 
     private void observerAllWallpapersViewModel() {
         viewModel.allWallpaperMutableLiveData.observe(
-                getViewLifecycleOwner(),
+                getActivity(),
                 allWallpaper -> {
-                    if (allWallpaper.getSuccess()) {
-                        photoResults.clear();
-                        allPhotoAdapterWithAd.clearPhotoList();
-                        photoResults.addAll(allWallpaper.getData());
-                        //addBannerAds();
-                        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-                        allPhotoAdapterWithAd.notifyDataSetChanged();
-                        homeBinding.loading.setVisibility(View.GONE);
-                        homeBinding.scrollView.setVisibility(View.VISIBLE);
+                    //isLoad = true;
+                    if (allWallpaper != null) {
+                        if (allWallpaper.getSuccess()) {
+                            photoResults.clear();
+                            if (page == 1)
+                              allPhotoAdapterWithAd.clearPhotoList();
+                            photoResults.addAll(allWallpaper.getData());
+                              addBannerAds();
+                            allPhotoAdapterWithAd.updatePhotoList(photoResults);
+                            allPhotoAdapterWithAd.notifyDataSetChanged();
+                            homeBinding.loading.setVisibility(View.GONE);
+                            homeBinding.photoList.setVisibility(View.VISIBLE);
+                            homeBinding.noInternet.setVisibility(View.GONE);
+                        }
+
+                        viewModel.allWallpaperMutableLiveData = new MutableLiveData<>();
+
                     }
 
-                    viewModel.allWallpaperMutableLiveData = new MutableLiveData<>();
                 }
         );
         viewModel.allWallpaperLoadError.observe(
@@ -180,9 +214,24 @@ public class HomeFragment extends Fragment {
                         if (isError) {
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             homeBinding.loading.setVisibility(View.GONE);
-                            homeBinding.scrollView.setVisibility(View.VISIBLE);
+                            homeBinding.photoList.setVisibility(View.VISIBLE);
+                            homeBinding.noInternet.setVisibility(View.GONE);
                         }
                         viewModel.allWallpaperLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
+        viewModel.noInternet.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Glide.with(getContext()).load(R.drawable.no_internet_1).into(homeBinding.noInternet);
+                            homeBinding.loading.setVisibility(View.GONE);
+                            homeBinding.noInternet.setVisibility(View.VISIBLE);
+                            homeBinding.photoList.setVisibility(View.VISIBLE);
+                        }
+                        viewModel.noInternet = new MutableLiveData<>();
                     }
                 }
         );
@@ -190,18 +239,18 @@ public class HomeFragment extends Fragment {
     }
 
     private void addBannerAds() {
-        for (int i = utils.AD_PER_PHOTO; i < photoResults.size(); i += utils.AD_PER_PHOTO) {
+        for (; i < photoResults.size(); i += utils.AD_PER_PHOTO) {
             AdView adView = new AdView(getContext());
             adView.setAdSize(AdSize.BANNER);
             adView.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
             photoResults.add(i, adView);
-
             loadBannerAds();
         }
+        i = 3;
     }
 
     private void loadBannerAds() {
-        loadBannerAds(utils.AD_PER_PHOTO);
+        loadBannerAds(i);
     }
 
     private void loadBannerAds(int index) {

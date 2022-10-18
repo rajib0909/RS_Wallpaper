@@ -93,7 +93,7 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/rsfinal" />
 
-        <!--<com.google.android.gms.ads.AdView
+        <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
             ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />-->
+            app:layout_constraintStart_toStartOf="parent" />
 
       <!--  &lt;!&ndash; Template View for native ad &ndash;&gt;
         <com.google.android.ads.nativetemplates.TemplateView

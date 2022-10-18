@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.rsdesign.wallpaper.R;
 import com.rsdesign.wallpaper.adapter.ShowAllCategoryAdapter;
@@ -125,6 +126,7 @@ public class CategoryFragment extends Fragment {
                         categoryAdapter.updateCategoryList(categoryList.getData());
                         categoryAdapter.notifyDataSetChanged();
                         categoryBinding.loading.setVisibility(View.GONE);
+                        categoryBinding.noInternet.setVisibility(View.GONE);
                     }
 
                     viewModel.categoryListMutableLiveData = new MutableLiveData<>();
@@ -135,10 +137,25 @@ public class CategoryFragment extends Fragment {
                     if (isError != null) {
                         if (isError){
                             categoryBinding.loading.setVisibility(View.GONE);
+                            categoryBinding.noInternet.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
 
                         viewModel.categoryListLoadError = new MutableLiveData<>();
+                    }
+                }
+        );
+
+        viewModel.noInternet.observe(
+                getViewLifecycleOwner(), isError -> {
+                    if (isError != null) {
+                        if (isError) {
+                            Glide.with(getContext()).load(R.drawable.no_internet_1).into(categoryBinding.noInternet);
+                            categoryBinding.loading.setVisibility(View.GONE);
+                            categoryBinding.noInternet.setVisibility(View.VISIBLE);
+                            categoryBinding.scrollView.setVisibility(View.VISIBLE);
+                        }
+                        viewModel.allWallpaperLoadError = new MutableLiveData<>();
                     }
                 }
         );
