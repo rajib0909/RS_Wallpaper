@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -16,6 +17,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +55,7 @@ public class TrendingFragment extends Fragment {
     private ViewModel viewModel;
     private String token = "";
     private String userId = "";
+    private int page = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,7 +97,7 @@ public class TrendingFragment extends Fragment {
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+/*        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -105,7 +108,7 @@ public class TrendingFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         trendingBinding.trendingPostList.setLayoutManager(layoutManager);
         trendingBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -130,10 +133,28 @@ public class TrendingFragment extends Fragment {
 
         trendingBinding.loading.setVisibility(View.VISIBLE);
         if (isLogin) {
-            viewModel.trendingWallpaper(token, userId);
+            viewModel.trendingWallpaper(token, userId, page);
         } else
-            viewModel.trendingWallpaper();
+            viewModel.trendingWallpaper(page);
         observerTrendingWallpapersViewModel();
+
+
+        trendingBinding.scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    Log.d("Tanvir", "Api call Hit" + page);
+                    page++;
+                    trendingBinding.loading.setVisibility(View.VISIBLE);
+                    if (isLogin) {
+                        viewModel.trendingWallpaper(token, userId, page);
+                    } else
+                        viewModel.trendingWallpaper(page);
+                    observerTrendingWallpapersViewModel();
+
+                }
+            }
+        });
 
 
         return trendingBinding.getRoot();
@@ -145,8 +166,11 @@ public class TrendingFragment extends Fragment {
                 getViewLifecycleOwner(),
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
+                        photoResults.clear();
+                        if (page == 1)
+                            allPhotoAdapterWithAd.clearPhotoList();
                         photoResults.addAll(allWallpaper.getData());
-                        addBannerAds();
+                     //   addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         trendingBinding.loading.setVisibility(View.GONE);
@@ -278,6 +302,7 @@ public class TrendingFragment extends Fragment {
 
     @Override
     public void onPause() {
+        page = 1;
         for (Object item : photoResults) {
             if (item instanceof AdView) {
                 AdView adView = (AdView) item;

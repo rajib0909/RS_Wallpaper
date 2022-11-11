@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -54,6 +56,7 @@ public class CategoryPhotoFragment extends Fragment {
     private ViewModel viewModel;
     private String token = "";
     private String userId = "";
+    private int page = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,7 +101,7 @@ public class CategoryPhotoFragment extends Fragment {
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+   /*     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -109,15 +112,15 @@ public class CategoryPhotoFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         categoryPhotoBinding.photoList.setLayoutManager(layoutManager);
         categoryPhotoBinding.photoList.setAdapter(allPhotoAdapterWithAd);
 
         categoryPhotoBinding.loading.setVisibility(View.VISIBLE);
         if (isLogin) {
-            viewModel.categoryWallpaper(String.valueOf(categoryId), userId);
+            viewModel.categoryWallpaper(String.valueOf(categoryId), userId, page);
         }else
-            viewModel.categoryWallpaper(String.valueOf(categoryId));
+            viewModel.categoryWallpaper(String.valueOf(categoryId), page);
         observerCategoryWallpapersViewModel();
 
         allPhotoAdapterWithAd.setOnClickPhoto(new ShowAllPhotoAdapterWithAd.OnClickPhoto() {
@@ -137,9 +140,23 @@ public class CategoryPhotoFragment extends Fragment {
                 viewModel.likeWallpaper(token, String.valueOf(photoId));
             }
         });
+        categoryPhotoBinding.scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    Log.d("Tanvir", "Api call Hit" + page);
+                    page++;
+                    categoryPhotoBinding.loading.setVisibility(View.VISIBLE);
+                    if (isLogin) {
+                        viewModel.categoryWallpaper(String.valueOf(categoryId), userId, page);
+                    } else
+                        viewModel.categoryWallpaper(String.valueOf(categoryId), page);
+                    observerCategoryWallpapersViewModel();
 
-        allPhotoAdapterWithAd.updatePhotoList(photoResults);
-        allPhotoAdapterWithAd.notifyDataSetChanged();
+                }
+            }
+        });
+
 
         return categoryPhotoBinding.getRoot();
     }
@@ -149,8 +166,11 @@ public class CategoryPhotoFragment extends Fragment {
                 getViewLifecycleOwner(),
                 wallpaper -> {
                     if (wallpaper.getSuccess()) {
+                        photoResults.clear();
+                        if (page == 1)
+                            allPhotoAdapterWithAd.clearPhotoList();
                         photoResults.addAll(wallpaper.getData());
-                        addBannerAds();
+                      //  addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         categoryPhotoBinding.loading.setVisibility(View.GONE);
@@ -281,6 +301,7 @@ public class CategoryPhotoFragment extends Fragment {
 
     @Override
     public void onPause() {
+        page = 1;
         for (Object item : photoResults) {
             if (item instanceof AdView) {
                 AdView adView = (AdView) item;

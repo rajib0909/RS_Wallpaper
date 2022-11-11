@@ -4,6 +4,7 @@ import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,8 +106,6 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
 
                     // Add the banner ad to the ad view.
                     adCardView.addView(adView);
-
-
                 }
                 break;
             case ITEM_TYPE_PHOTO:
@@ -115,13 +114,13 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
                     PhotoVIewHolder photoVIewHolder = (PhotoVIewHolder) holder;
                     Datum result = (Datum) allResultList.get(position);
 
-                    if (position == 4){
+                  /*  if (position == 4){
                         photoVIewHolder.itemView.setVisibility(View.GONE);
                         ViewGroup.LayoutParams params = photoVIewHolder.itemView.getLayoutParams();
                         params.height = 0;
                         params.width = 0;
                         holder.itemView.setLayoutParams(params);
-                    }
+                    }*/
 
                     //Set Title Name
                     photoVIewHolder.photoTitle.setText(result.getTitle());
@@ -172,13 +171,13 @@ public class ShowAllPhotoAdapterWithAd extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
         if (position == 0 || allResultList.get(position) instanceof Datum) {
+           // Log.d("tanvir", String.valueOf(position));
             return ITEM_TYPE_PHOTO;
-        } else {
-            if (position % utils.AD_PER_PHOTO == 0) {
-                return ITEM_TYPE_BANNER_AD;
-            } else
-                return ITEM_TYPE_PHOTO;
+        } else{
+          //  Log.d("tanvir ad", String.valueOf(position));
+            return ITEM_TYPE_BANNER_AD;
         }
+
     }
 
     //photo view holder

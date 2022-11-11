@@ -53,19 +53,23 @@ public interface Api {
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/trending")
-    Single<AllWallpaper> trendingWallpaper();
+    Single<AllWallpaper> trendingWallpaper(
+            @Query("page") int page
+    );
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/trending")
     Single<AllWallpaper> trendingWallpaper(
             @Header("Authorization") String token,
-            @Query("user_id") String id
+            @Query("user_id") String id,
+            @Query("page") int page
     );
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/search")
     Single<AllWallpaper> searchWallpaper(
-            @Query("tag") String tag
+            @Query("tag") String tag,
+            @Query("page") int page
     );
 
     @Headers({"Accept: application/json"})
@@ -73,7 +77,8 @@ public interface Api {
     Single<AllWallpaper> searchWallpaper(
             @Header("Authorization") String token,
             @Query("user_id") String id,
-            @Query("tag") String tag
+            @Query("tag") String tag,
+            @Query("page") int page
     );
 
 
@@ -102,14 +107,16 @@ public interface Api {
     @Headers({"Accept: application/json"})
     @GET("wallpaper/category")
     Single<AllWallpaper> categoryWallpaper(
-            @Query("category_id") String id
+            @Query("category_id") String id,
+            @Query("page") int page
     );
 
     @Headers({"Accept: application/json"})
     @GET("wallpaper/category")
     Single<AllWallpaper> categoryWallpaper(
             @Query("category_id") String id,
-            @Query("user_id") String userId
+            @Query("user_id") String userId,
+            @Query("page") int page
     );
 
     @Headers({"Accept: application/json"})

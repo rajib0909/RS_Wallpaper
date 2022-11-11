@@ -82,7 +82,7 @@ public class AdminAllPhotoFragment extends Fragment {
             viewModel.allWallpaper(token, userId, page);
             observerAllWallpapersViewModel();
         }else {
-            viewModel.searchWallpaper(token, userId, searchTag);
+            viewModel.searchWallpaper(token, userId, searchTag, page);
             observerSearchWallpapersViewModel();
         }
 
@@ -98,7 +98,7 @@ public class AdminAllPhotoFragment extends Fragment {
                 if (photoBinding.etSearch.getText().length() != 0) {
                     searchTag = photoBinding.etSearch.getText().toString();
                     photoBinding.loading.setVisibility(View.VISIBLE);
-                    viewModel.searchWallpaper(token, userId, photoBinding.etSearch.getText().toString());
+                    viewModel.searchWallpaper(token, userId, photoBinding.etSearch.getText().toString(), page);
                     observerSearchWallpapersViewModel();
 
                     View view = getActivity().getCurrentFocus();

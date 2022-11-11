@@ -160,9 +160,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     }
 
 
-    public void trendingWallpaper() {
+    public void trendingWallpaper(int page) {
         disposable.add(
-                networkService.trendingWallpaper()
+                networkService.trendingWallpaper(page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -187,9 +187,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-    public void trendingWallpaper(String token, String userId) {
+    public void trendingWallpaper(String token, String userId, int page) {
         disposable.add(
-                networkService.trendingWallpaper(token, userId)
+                networkService.trendingWallpaper(token, userId, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -215,9 +215,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     }
 
 
-    public void searchWallpaper(String tag) {
+    public void searchWallpaper(String tag, int page) {
         disposable.add(
-                networkService.searchWallpaper(tag)
+                networkService.searchWallpaper(tag, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -242,9 +242,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-    public void searchWallpaper(String token, String userId, String tag) {
+    public void searchWallpaper(String token, String userId, String tag, int page) {
         disposable.add(
-                networkService.searchWallpaper(token, userId, tag)
+                networkService.searchWallpaper(token, userId, tag, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -269,9 +269,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-    public void categoryWallpaper(String id) {
+    public void categoryWallpaper(String id, int page) {
         disposable.add(
-                networkService.categoryWallpaper(id)
+                networkService.categoryWallpaper(id, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {
@@ -296,9 +296,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         );
     }
 
-    public void categoryWallpaper(String id, String userId) {
+    public void categoryWallpaper(String id, String userId, int page) {
         disposable.add(
-                networkService.categoryWallpaper(id, userId)
+                networkService.categoryWallpaper(id, userId, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<AllWallpaper>() {

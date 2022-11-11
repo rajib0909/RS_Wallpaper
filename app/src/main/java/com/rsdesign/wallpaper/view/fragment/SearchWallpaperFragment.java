@@ -10,6 +10,7 @@ import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -18,6 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -110,7 +112,7 @@ public class SearchWallpaperFragment extends Fragment {
 
         allPhotoAdapterWithAd = new ShowAllPhotoAdapterWithAd(new ArrayList<>(), getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+ /*       layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (position == 0) {
@@ -121,7 +123,7 @@ public class SearchWallpaperFragment extends Fragment {
                     return 2; // OTHER ITEMS OCCUPY ONLY A SINGLE SPACE
                 }
             }
-        });
+        });*/
         searchWallpaperBinding.trendingPostList.setLayoutManager(layoutManager);
         searchWallpaperBinding.trendingPostList.setAdapter(allPhotoAdapterWithAd);
 
@@ -147,9 +149,9 @@ public class SearchWallpaperFragment extends Fragment {
         searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
         if (!clearText){
             if (isLogin) {
-                viewModel.searchWallpaper(token, userId, searchTag);
+                viewModel.searchWallpaper(token, userId, searchTag, page);
             } else
-                viewModel.searchWallpaper(searchTag);
+                viewModel.searchWallpaper(searchTag, page);
             observerSearchWallpapersViewModel();
         }else {
             if (isLogin) {
@@ -159,6 +161,32 @@ public class SearchWallpaperFragment extends Fragment {
 
             observerAllWallpapersViewModel();
         }
+
+
+        searchWallpaperBinding.scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY == v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight()) {
+                    Log.d("Tanvir", "Api call Hit" + page);
+                    page++;
+                    searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
+                    if (!clearText){
+                        if (isLogin) {
+                            viewModel.searchWallpaper(token, userId, searchTag, page);
+                        } else
+                            viewModel.searchWallpaper(searchTag, page);
+                        observerSearchWallpapersViewModel();
+                    }else {
+                        if (isLogin) {
+                            viewModel.allWallpaper(token, userId, page);
+                        } else
+                            viewModel.allWallpaper(page);
+
+                        observerAllWallpapersViewModel();
+                    }
+                }
+            }
+        });
 
 
 
@@ -175,8 +203,11 @@ public class SearchWallpaperFragment extends Fragment {
                         searchWallpaperBinding.noInternet.setVisibility(View.GONE);
                         if (allWallpaper.getData().size()!=0){
                             searchWallpaperBinding.notFound.setVisibility(View.GONE);
+                            photoResults.clear();
+                            if (page == 1)
+                                allPhotoAdapterWithAd.clearPhotoList();
                             photoResults.addAll(allWallpaper.getData());
-                            addBannerAds();
+                           // addBannerAds();
                             allPhotoAdapterWithAd.updatePhotoList(photoResults);
                             allPhotoAdapterWithAd.notifyDataSetChanged();
                         }else {
@@ -223,8 +254,11 @@ public class SearchWallpaperFragment extends Fragment {
                 getViewLifecycleOwner(),
                 allWallpaper -> {
                     if (allWallpaper.getSuccess()) {
+                        photoResults.clear();
+                        if (page == 1)
+                            allPhotoAdapterWithAd.clearPhotoList();
                         photoResults.addAll(allWallpaper.getData());
-                        addBannerAds();
+                       // addBannerAds();
                         allPhotoAdapterWithAd.updatePhotoList(photoResults);
                         allPhotoAdapterWithAd.notifyDataSetChanged();
                         searchWallpaperBinding.loading.setVisibility(View.GONE);
@@ -315,6 +349,7 @@ public class SearchWallpaperFragment extends Fragment {
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                page = 1;
                 clearText = false;
                 searchTag = searchView.getQuery().toString();
                 searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
@@ -322,9 +357,9 @@ public class SearchWallpaperFragment extends Fragment {
                 photoResults.clear();
                 allPhotoAdapterWithAd.notifyDataSetChanged();
                 if (isLogin) {
-                    viewModel.searchWallpaper(token, userId, searchTag);
+                    viewModel.searchWallpaper(token, userId, searchTag, page);
                 } else
-                    viewModel.searchWallpaper(searchTag);
+                    viewModel.searchWallpaper(searchTag, page);
                 observerSearchWallpapersViewModel();
                 return false;
             }
@@ -346,6 +381,7 @@ public class SearchWallpaperFragment extends Fragment {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
                 if (!searchView.getQuery().toString().isEmpty()){
+                    page = 1;
                     searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
                     allPhotoAdapterWithAd.clearPhotoList();
                     photoResults.clear();
@@ -370,6 +406,7 @@ public class SearchWallpaperFragment extends Fragment {
                 searchView.clearFocus();
                 searchView.setQuery("", false);
             }
+            page = 1;
             searchWallpaperBinding.loading.setVisibility(View.VISIBLE);
             allPhotoAdapterWithAd.clearPhotoList();
             photoResults.clear();
@@ -407,6 +444,7 @@ public class SearchWallpaperFragment extends Fragment {
                 adView.pause();
             }
         }
+        page = 0;
         super.onPause();
     }
 

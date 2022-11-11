@@ -59,20 +59,20 @@ public class NetworkService {
         return api.allWallpaper(token, userId, page);
     }
 
-    public Single<AllWallpaper> trendingWallpaper() {
-        return api.trendingWallpaper();
+    public Single<AllWallpaper> trendingWallpaper(int page) {
+        return api.trendingWallpaper(page);
     }
 
-    public Single<AllWallpaper> trendingWallpaper(String token, String userId) {
-        return api.trendingWallpaper(token, userId);
+    public Single<AllWallpaper> trendingWallpaper(String token, String userId, int page) {
+        return api.trendingWallpaper(token, userId, page);
     }
 
-    public Single<AllWallpaper> searchWallpaper(String tag) {
-        return api.searchWallpaper(tag);
+    public Single<AllWallpaper> searchWallpaper(String tag, int page) {
+        return api.searchWallpaper(tag, page);
     }
 
-    public Single<AllWallpaper> searchWallpaper(String token, String userId, String tag) {
-        return api.searchWallpaper(token, userId, tag);
+    public Single<AllWallpaper> searchWallpaper(String token, String userId, String tag, int page) {
+        return api.searchWallpaper(token, userId, tag, page);
     }
 
     public Single<CategoryList> allCategory() {
@@ -91,12 +91,12 @@ public class NetworkService {
         return api.reportPhoto(id);
     }
 
-    public Single<AllWallpaper> categoryWallpaper(String id) {
-        return api.categoryWallpaper(id);
+    public Single<AllWallpaper> categoryWallpaper(String id, int page) {
+        return api.categoryWallpaper(id, page);
     }
 
-    public Single<AllWallpaper> categoryWallpaper(String id, String userId) {
-        return api.categoryWallpaper(id, userId);
+    public Single<AllWallpaper> categoryWallpaper(String id, String userId, int page) {
+        return api.categoryWallpaper(id, userId, page);
     }
 
     public Single<PhotoLikeResponse> likeWallpaper(String token, String id) {
