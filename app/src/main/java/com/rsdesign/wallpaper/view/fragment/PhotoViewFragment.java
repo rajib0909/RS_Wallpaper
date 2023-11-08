@@ -4,6 +4,8 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.rsdesign.wallpaper.util.utils.convertCount;
 import static com.rsdesign.wallpaper.util.utils.isLoginUser;
 import static com.rsdesign.wallpaper.util.utils.uploaderId;
+
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DownloadManager;
@@ -12,9 +14,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,6 +32,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -83,7 +89,14 @@ public class PhotoViewFragment extends Fragment {
     private String token = "";
     private boolean isWallpaperSet = false;
     private Bitmap imageBitmap = null;
+
+    private Bitmap cropImageBitmap = null;
     private WallpaperManager wallpaperManager;
+
+    private  int WRITE_PERMISSION_REQUEST = 1;
+    private  int WRITE_PERMISSION_REQUEST_CROP = 2;
+
+    private LottieAnimationView cropLoading;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -305,21 +318,22 @@ public class PhotoViewFragment extends Fragment {
 
         });
         photoViewBinding.btnDownload.setOnClickListener(l -> {
-            viewModel.downloadCount(String.valueOf(data.getId()));
-            /* downloadImageNew("RS wallpaper", data.getImage());
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(getActivity());
-            } else {
-                Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
-            }*/
-            photoViewBinding.loading.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    photoViewBinding.loading.setVisibility(View.GONE);
-                    storeImage(imageBitmap);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions( new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
+
+                }else {
+                    imageDownload();
                 }
-            }, 2000);
+            }else {
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions( new String[]{Manifest.permission.READ_MEDIA_IMAGES}, WRITE_PERMISSION_REQUEST);
+
+                }else {
+                    imageDownload();
+                }
+            }
+
         });
 
         photoViewBinding.favourite.setOnClickListener(l -> {
@@ -378,7 +392,7 @@ public class PhotoViewFragment extends Fragment {
             ImageView btnClose = mDialog.findViewById(R.id.btnClose);
             ImageView btnDownload = mDialog.findViewById(R.id.btnDownload);
             TextView btnSetWallpaper = mDialog.findViewById(R.id.btnSetWallpaper);
-            LottieAnimationView loading = mDialog.findViewById(R.id.loading);
+            cropLoading = mDialog.findViewById(R.id.loading);
 
             btnClose.setOnClickListener(view -> {
                 loadRewordAd();
@@ -412,15 +426,22 @@ public class PhotoViewFragment extends Fragment {
             });
 
             btnDownload.setOnClickListener(view -> {
-                loading.setVisibility(View.VISIBLE);
-                viewModel.downloadCount(String.valueOf(data.getId()));
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loading.setVisibility(View.GONE);
-                        storeImage(cropImageView.getCroppedImage());
+                cropImageBitmap = cropImageView.getCroppedImage();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions( new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_PERMISSION_REQUEST);
+
+                    }else {
+                        imageDownload();
                     }
-                }, 2000);
+                }else {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions( new String[]{Manifest.permission.READ_MEDIA_IMAGES}, WRITE_PERMISSION_REQUEST);
+
+                    }else {
+                        imageDownload();
+                    }
+                }
             });
 
             cropImageView.setImageBitmap(imageBitmap);
@@ -428,6 +449,37 @@ public class PhotoViewFragment extends Fragment {
         });
 
         return photoViewBinding.getRoot();
+    }
+
+    private void imageDownload(){
+        viewModel.downloadCount(String.valueOf(data.getId()));
+     /*     downloadImageNew("RS wallpaper", data.getImage());
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(getActivity());
+            } else {
+                Toast.makeText(getContext(), "Ad Failed", Toast.LENGTH_SHORT).show();
+            }*/
+        photoViewBinding.loading.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                photoViewBinding.loading.setVisibility(View.GONE);
+                storeImage(imageBitmap);
+            }
+        }, 2000);
+    }
+
+    private void imageDownload(Bitmap cropImgBitmap){
+        cropLoading.setVisibility(View.VISIBLE);
+        viewModel.downloadCount(String.valueOf(data.getId()));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                cropLoading.setVisibility(View.GONE);
+                storeImage(cropImgBitmap);
+            }
+        }, 2000);
+
     }
 
 
@@ -611,6 +663,31 @@ public class PhotoViewFragment extends Fragment {
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
         return mediaFile;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == WRITE_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission for writing granted; you can save the file now.
+                imageDownload();
+                Log.d("Tanvir", "Permission ok");
+            } else {
+                Toast.makeText(getContext(), "Please give your storage permission to store this image", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (requestCode == WRITE_PERMISSION_REQUEST_CROP) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission for writing granted; you can save the file now.
+                imageDownload(cropImageBitmap);
+                Log.d("Tanvir", "Permission ok");
+            } else {
+                Toast.makeText(getContext(), "Please give your storage permission to store this image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 
 
     @Override
